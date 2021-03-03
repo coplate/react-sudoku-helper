@@ -4,20 +4,27 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          First change to test github actions
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {
+        [...Array(9).keys()].map( row => {
+          return [...Array(9).keys()].map( column => {
+            let selected=(row == column)?"selected":"";
+            return <div class = {`cell row-${row} column-${column}`}>
+              
+              <div class={`given numeric cell-child ${selected}`}>
+                {row} {column} 
+              </div>
+              <div class="corner cell-child">
+                {
+                  [...Array(9).keys()].map( corner => {
+                    return <div class={`corner-${corner} numeric`} >{corner+1}</div>
+                  })
+                }
+              </div>
+              <div class="interactor  cell-child" />
+            </div>
+          })
+        })
+      }
     </div>
   );
 }
