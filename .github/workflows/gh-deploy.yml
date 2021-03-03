@@ -28,6 +28,7 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm run deploy
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+      - run: npm run build
+      - run: git --work-tree build add --all
+      - run: git --work-tree build commit -m 'Auto build from GitHub Action for ref $GITHUB_REF'
+      - run: git push origin HEAD:gh-pages --force
