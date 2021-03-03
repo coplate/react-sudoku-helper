@@ -34,6 +34,6 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git --work-tree build add --all
-          git --work-tree build commit -m 'Auto build from GitHub Action for ref $GITHUB_REF'
+          git --work-tree build commit -m "Auto build from GitHub Action for ref $GITHUB_REF"
           git push origin HEAD:gh-pages --force
           
