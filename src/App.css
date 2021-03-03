@@ -6,6 +6,7 @@
   grid-template-columns: repeat(9, 1fr);
   
 }
+
 .numeric {
   display: flex;
   justify-content: center;
@@ -15,26 +16,50 @@
   position: relative;
   border: 1px solid green;
   display: flex;
+  min-height: 10ch;
+  min-width: 10ch;
 
 }
 .cell-child {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: 25%;
 }
-.given {
-  background-color: white;
-}
-.given.selected {
-  background-color: gray;
-}
-.corner {
+
+.candidates {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(9, 1fr);
+  justify-items: start;
+  top: 0%;
+}
+.notes {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  justify-items: start;
+  top: 25%;
+}
+.snyder {
+  top: 50%;
+  display: grid;
+  justify-items: start;
+  grid-template-columns: repeat(9, 1fr);
+}
+.data {
+  top: 75%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .interactor {
   z-index: 9;
   background-color: ;
+}
+.given {
+  background-color: lightgray;
+  height: 100%;
+}
+.given.selected {
+  background-color: gray;
 }
 .column-0 {
   border-left: 4px  solid green;
