@@ -1,94 +1,39 @@
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import Board from './Board'
 
-function Given(props){
-  if( props.column == 4){
-    let selected=(props.row == props.column)?"selected":"";
-    return (
-      <div class={`given numeric cell-child ${selected}`}>
-        Given
-      </div>
-  
-    )
-  
-  }
-  return null;
-}
-function Notes(props){
-  return (
-    <div class="notes cell-child">
-      {
-        [...Array(9).keys()].map( note => {
-          return <div class={`notes notes-${note} numeric`} >{note+1}</div>
-        })
-      }
-    </div>
-
-  )  
-  
-}
-function Candidates(props){
-  return (
-    <div class="candidates cell-child">
-      {
-        [...Array(9).keys()].map( candidate => {
-          return <div class={`candidate candidate-${candidate} numeric`} >{candidate+1}</div>
-        })
-      }
-    </div>
-
-  )  
-  
-}
-function Snyder(props){
-  return (
-    <div class="snyder cell-child">
-      {
-        [...Array(9).keys()].map( corner => {
-          return <div class={`corner corner-${corner} numeric`} >{corner+1}</div>
-        })
-      }
-    </div>
-
-  )  
-  
-}
-function Data(props){
-  return <div class="data cell-child" >
-    Data
-  </div>
-}
-function Interactor(props){
-  return null;
+function Controls(props) {
+  return <div><button onClick={props.onUndoClick}>Undo</button><button onClick={props.onRedoClick}>Redo</button></div>
   
 }
 
-function Square(props){
-  
-
-  return (
-    <div class = {`cell row-${props.row} column-${props.column}`}>
-      <Notes {...props} />
-      <Candidates {...props} />
-      <Snyder {...props} />
-      <Data {...props} />
-      <Interactor {...props} />
-      <Given {...props} />
-    </div>
-  );
-
-}
 function App() {
+  let def = Array(9*9).fill(0);
+  const [count, setCount] = useState(0);
+  const [history, setHistory] = useState([{givens:  def}]);
+  const current = history[count];
+        
+  const undoHandler = (e) =>{ if( count ){ setCount(count-1)}};
+  const redoHandler = (e) =>{ if( count+1 < history.length ){ setCount(count+1)}};
+
   return (
-    <div className="App">
-      {
-        [...Array(9).keys()].map( row => {
-          return [...Array(9).keys()].map( column => {
-            return <Square row = {row} column={column} />
-          })
-        })
-      }
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => {
+        
+        let newGivens = current.givens.slice(0,current.givens.length+1);
+        newGivens[count]=count+1;
+        setHistory( [...history.slice(0,count+1), {...current, givens: newGivens}]);
+        setCount(count + 1);
+        }}>
+        Click me
+      </button>
+      <Controls onUndoClick={undoHandler} onRedoClick={redoHandler}/>
+      <Board givens={current}/>
+      
     </div>
+  
   );
 }
 
