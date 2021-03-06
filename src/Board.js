@@ -2,9 +2,9 @@ function Given(props){
     
     if( props.squareData.given ){
       // eslint-disable-next-line
-      let selected=(props.row == props.column)?"selected":"";
+      
       return (
-        <div class={`given numeric cell-child ${selected}`} onClick={props.onClick("Given")} >
+        <div class={`given numeric cell-child`} >
           {props.squareData.given}
         </div>
     
@@ -18,7 +18,7 @@ function Given(props){
     
     if( props.answer ){
       return (
-        <div class={`given numeric cell-child`} onClick={props.onClick("Answer")}>
+        <div class={`given numeric cell-child`} >
           {props.given}
         </div>
     
@@ -30,10 +30,10 @@ function Given(props){
 
   function Notes(props){
     return (
-      <div class="notes cell-child" onClick={props.onClick("Notes")}>
+      <div class="notes cell-child" >
         {
           [...Array(9).keys()].map( note => {
-            return <div key={`note-${note}`} class={`note note-${note} numeric`} onClick={props.onClick("note")}>{note+1}</div>
+            return <div key={`note-${note}`} class={`note note-${note} numeric`} >{note+1}</div>
           })
         }
       </div>
@@ -44,7 +44,7 @@ function Given(props){
   
   function Snyder(props){
     return (
-      <div class="snyder cell-child" onClick={props.onClick("Snyder")}>
+      <div class="snyder cell-child" >
         {
           props.squareData.candidates.map( (value, corner) => {
             return <div key={`corner-${corner}`} class={`corner corner-${corner} numeric`} onClick={props.snyderClickHandler(props, corner)}>{value}</div>
@@ -75,9 +75,9 @@ function Given(props){
   }
   
   function Square(props){
-    
+    let selected=(props.squareData.selected)?"selected":"";
     return (
-      <div id={`cell-${props.idx}`} class = {`cell cell-${props.idx} row-${props.row} column-${props.column}`} onClick={props.onClick("Square")} >
+      <div id={`cell-${props.idx}`} class = {`cell cell-${props.idx} row-${props.row} column-${props.column} ${selected}`} onClick={props.onClick(props)} onMouseMove={props.squareDragHandler(props)}  onMouseDown={props.onMouseDown(props)}  >
         <Candidates {...props} />
         <Snyder {...props} />
         {
