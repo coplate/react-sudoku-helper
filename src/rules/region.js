@@ -17,7 +17,6 @@ class Region {
     static fromRectangle(y,x,height,width, boardData){
         
         let cells = boardData.filter( cellData =>{  
-            //console.log(row,column);
             
             return inRectangle(y,x,height,width, cellData);
         });
@@ -49,31 +48,29 @@ class Region {
         // somethign else runs after this, and puts error CSS on each thing
 
     }
-    apply(mutableBoardData){
+    // cloneSquare function allows us to create new square object to prevent mutating the old version
+    // pass a mutate function istead that will coder the clone and board updatge in the parent?
+    apply(mutableBoardData, cloneSquare){
         // this function will remove impossible candidates and return the new list
-        
-       let mutated=false;
+    
+        let mutations = 0;
         this.cellIndexes.forEach( (cellIdx, index, array) => {
-            let newSquareData = mutableBoardData[cellIdx];
-            newSquareData.candidates = [...newSquareData.candidates];
-            newSquareData.candidates.forEach( (candidate, cIndex, cArray) => {
-                if(this.solved(mutableBoardData, candidate, cellIdx)){
-                    if( candidate >0 ){
-                        console.log(`${candidate} has mutated on cellIdx ${cellIdx} and on ${newSquareData.index} nest level`);
+            let immutableSquare = mutableBoardData[cellIdx];
+            
 
+            immutableSquare.candidates.forEach( (candidate, cIndex, cArray) => {
+                if( candidate > 0 ){
+                    if(this.solved(mutableBoardData, candidate, cellIdx)){
+                        let newSquareData = cloneSquare(immutableSquare);
                         newSquareData.candidates[cIndex]=0;
-                        mutated=true;
+                        mutations = mutations+1;
+                        mutableBoardData[cellIdx]=newSquareData;
                     }
-                    
-               //     0
-                }else{
-                 //   c
-                } 
-            })
+                }
+            });
 
         });
-        console.log("Retruning mutate value of ",mutated);
-        return mutated;
+        return mutations;
         
         // somethign else runs after this, and puts error CSS on each thing
 
@@ -101,6 +98,9 @@ class Region {
         return this.cellIndexes.some( (cellIndex, index, array) => {
             if( cellIdx !== cellIndex){
                 if( boardData[cellIndex].given === candidate){
+                    return true;
+                }
+                if( boardData[cellIndex].answer === candidate){
                     return true;
                 }
             }

@@ -30,11 +30,13 @@
 }
 
 .candidates {
-  display: grid;
-  grid-template-columns: repeat(9, 1fr);
-  justify-items: start;
+  
+  justify-items: center;
   top: 75%;
-  font-size: 0.8em;
+  font-size: 1em;
+}
+.candidate {
+  display: inline-block;
 }
 .notes {
   display: grid;
@@ -48,8 +50,22 @@
   width: 60%;
   font-size: 0.75em;
   display: grid;
-  justify-items: center;
   grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 75%;
+  padding: 4px;
+  /*justify-items: center;
+  
+  grid-template-rows: 1fr 1fr 1fr;
+  */
+}
+.corner {
+  padding: 2px;
+}
+.corner-style-hide {
+  visibility: hidden;
+}
+.corner-style-highlight {
+  background-color: lime;
 }
 .snyder:hover {
   cursor: pointer;
@@ -67,6 +83,11 @@
 }
 .given {
   background-color: lightgray;
+  height: 100%;
+}
+.answer {
+  font-size: 8ch;
+  background-color: whitesmoke;
   height: 100%;
 }
 .column-0 {
