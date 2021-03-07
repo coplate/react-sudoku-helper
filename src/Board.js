@@ -45,8 +45,12 @@ function Given(props){
   function Snyder(props){
     let candidates = props.squareData.candidates;
     let remaining_candidates = candidates.filter( (c) => c>0 );
-    let candidate_count = remaining_candidates.length;
+    let candidate_count = remaining_candidates.length; // used to tell if this is the last candidate in a region
+    // something else tells us if this is the only one of it's kind in a regions.
+    // or should the rule, when detecting 1, remove the others?
     
+
+
     return (
       <div className="snyder cell-child" >
         {
@@ -54,7 +58,7 @@ function Given(props){
             let style = 'hide';
             if(value>0){
                 style = 'show'
-                if( candidate_count == 1 ){
+                if( candidate_count === 1 ){
                     style='highlight'
                 }
             }
@@ -75,10 +79,10 @@ function Given(props){
           
           props.squareData.candidates.map( (candidate, index) => {
             
-            if( candidate == 0){
-                return ;
+            if( candidate === 0){
+                return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  ></div>;
             }else{
-                return;
+                return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  ></div>;
             }
             return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  >{candidate}</div>
           })

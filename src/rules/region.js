@@ -27,47 +27,76 @@ class Region {
         this.cellIndexes=cells.map(c => c.idx);
     }
 
-    /* this function must not  mutate boardData, instead return the cell that needs to be changed */
-    // returns [.. {idx, candidates} ..]
-    correctCandidates(boardData){
-        // this function will remove impossible candidates and return the new list
-
-        let resultList = this.cellIndexes.map(i => ({
-            "idx":i,
-            "candidates":[...boardData[i].candidates]
-        }) );
-
-        this.cellIndexes.forEach( (cellIdx, index, array) => {
-            resultList[index].candidates = resultList[index].candidates.map( c => (
-                this.solved(boardData, c, cellIdx))?0:c 
-            );
-
-        });
-
-        return resultList;
-        // somethign else runs after this, and puts error CSS on each thing
-
-    }
     // cloneSquare function allows us to create new square object to prevent mutating the old version
     // pass a mutate function istead that will coder the clone and board updatge in the parent?
     apply(mutableBoardData, cloneSquare){
         // this function will remove impossible candidates and return the new list
     
+
+        let removeOther = (replacementCandidates, known) => {
+            let otherMutations = 0;
+            replacementCandidates.forEach( (c,i,a) =>{
+                if( c > 0 && c !== known ){
+                    a[i]=0;
+                    otherMutations = otherMutations+1;
+                }
+            });
+            return otherMutations;
+        }
+
+        //5..2...4....6.3....3...9..7..3..7.....7..8...6......2..8......3...4..6.....1..5..
         let mutations = 0;
         this.cellIndexes.forEach( (cellIdx, index, array) => {
             let immutableSquare = mutableBoardData[cellIdx];
+            let replacementCandidates = [...immutableSquare.candidates];
+            let known = immutableSquare.given || immutableSquare.answer;
+        
+            // clear all other values if we know the answer
+            if(  known ){
+                mutations += removeOther(replacementCandidates, known);
+                // remove all candidate except given
+            }
             
 
-            immutableSquare.candidates.forEach( (candidate, cIndex, cArray) => {
+            // if the region contains only 1 of a given candidate, remove all other candidates form that cell
+            replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 if( candidate > 0 ){
-                    if(this.solved(mutableBoardData, candidate, cellIdx)){
-                        let newSquareData = cloneSquare(immutableSquare);
-                        newSquareData.candidates[cIndex]=0;
-                        mutations = mutations+1;
-                        mutableBoardData[cellIdx]=newSquareData;
+                    let regionSquares = this.cellIndexes.map( i=> mutableBoardData[i]);
+                    let regionCandidates = regionSquares.map( s => s.candidates );
+                    let matchingCandidateValues = regionCandidates.map( c => c[cIndex]).filter( c => c != 0);
+
+                    if( matchingCandidateValues.length == 1 ){
+                        mutations += removeOther(cArray, candidate);
                     }
                 }
+
             });
+            // if the region has a known candidate in another cell, remove that from this cell
+            replacementCandidates.forEach( (candidate, cIndex, cArray) => {
+
+                if( candidate > 0 ){
+
+                    if(this.solved(mutableBoardData, candidate, cellIdx)){
+                        replacementCandidates[cIndex] = 0;
+                        mutations = mutations+1;
+                    }
+
+                
+                }
+
+            });
+            // if the region has a candidate that exists in the intersection of two regions, 
+            // and the candidate only exists in that intersection on the Other rule, 
+            //then this candidate must also exist within said intersection on this rule!
+            if( mutations>0 ){
+                let newSquareData = cloneSquare(immutableSquare);
+                newSquareData.candidates = replacementCandidates;
+                
+                mutableBoardData[cellIdx]=newSquareData;
+            }
+
+            
+            
 
         });
         return mutations;
@@ -104,6 +133,7 @@ class Region {
                     return true;
                 }
             }
+            return false;
         });
         
         // if candidate is listed as Given or Answer for anything ELSE in the region, remove the candidate
