@@ -1,7 +1,12 @@
-class Knight {
+import Region from './region';
 
-    constructor(cellIndexes, matchDistance=0) {
-        this.cellIndexes=[...cellIndexes];
+//This is an example of a region that does not support intersection, because this is the whole thing
+// it cannot act as ruleB, but it can act as ruleA.
+// 
+class Knight extends Region{
+
+    constructor(cells, matchDistance=0) {
+        super(cells);
         this.matchDistance = matchDistance;
     }
 
@@ -13,28 +18,22 @@ class Knight {
             let immutableSquare = mutableBoardData[cellIdx];
             let replacementCandidates = [...immutableSquare.candidates];
             
-            let known = immutableSquare.given || immutableSquare.answer;
-        
+            if( immutableSquare.given || immutableSquare.answer ){
+                return;  
+            };
             
+        
+            let y = Math.floor(cellIdx/9);
+            let x = cellIdx % 9;
+    
             replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 
                 if( candidate > 0 ){
-
-                    //knightIndexes.for
-                    // filter for givens a knights move away
-                    let y = Math.floor(cellIdx/9);
-                    let x = cellIdx % 9;
                     let solvedIndex = this.cellIndexes.some( cIdx => {
                         let comparedKnown = mutableBoardData[cIdx].given || mutableBoardData[cIdx].answer;
                         if( comparedKnown !== 0){
                             if( Math.abs( comparedKnown - candidate) == this.matchDistance ){
-                                let row = Math.floor(cIdx/9);
-                                let col = cIdx % 9;
-
-                                if( Math.abs(row-y) ==2 && Math.abs(col-x) == 1){
-                                    return true;
-                                }
-                                if( Math.abs(row-y) ==1 && Math.abs(col-x) ==2 ){
+                                if(  Math.abs( (Math.floor(cIdx/9)-y) * ((cIdx % 9)-x) )== 2){
                                     return true;
                                 }
                             }

@@ -6,6 +6,8 @@ import Standard from "./rules/standard";
 
 import Cage from './rules/cage';
 import Knight from './rules/knight';
+
+import Normal from './rules/normal';
 // snyder notation - puts a mark on the cell if the candidate can ONLY go in 2 cells
 // if we get 2 snyder marks ( i.e 7,9 on 2 squares, those must be eliminated form other cells)
 // Center marks are the only candidates that are possible in a ceell, as opposed to the only cells that are possible for a candidate
@@ -40,6 +42,7 @@ function startingState(){
   });  
 
   let rules = [...columnRules, ...rowRules, ...boxRules];
+//  let rules = [new Normal(boardData)];
   return {
     "boardData": boardData,
     "rules": rules,
@@ -83,9 +86,58 @@ function App() {
       
     });
 
+    if( mutations === 0 ){
+      current.rules.forEach( (ruleA, indexA, arrayA ) => {
+        current.rules.forEach( (ruleB, indexB, arrayB ) => {
+          if( ruleA == ruleB ){
+            return;
+          }
+          if(! ( ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource() )){
+          return ;
+          }
+          [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
+              // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
+              let candidate = index+1;
+              let locationA = ruleA.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
+              let locationB = ruleB.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
+              let intersection = ruleA.cellIndexes.filter( (i) => ruleB.cellIndexes.includes(i));
+              
+              if(locationA.every( (i) => intersection.includes(i) )){
+                // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
+                // all cells in ruleB, if B is a 'unique' rule;
+                // but not all 
+                if( locationB.length > intersection.length){
+                  //console.log("action, mutations", current.lastAction, mutations);
+                  //console.log("We have found an itersection of ", candidate, locationA, intersection);
+                  //removing it
+                  ruleB.cellIndexes.forEach((c)=>{
+                    if(! intersection.includes(c)){
+                      //console.log("Removing it from rulB", c);
+                      //console.log(locationB);
+                      //mutations = mutations+1;
+                      
+                          let newSquareData = cloneSquare(newBoardData[c]);
+                          newSquareData.candidates = newSquareData.candidates.map( (i)=> i==candidate?0:i);
+                          mutations = mutations+1;
+                          newBoardData[c]=newSquareData;
+                        
+                    }
+                  });
+                }
+              }
+              
+          });
+          //applyIntersection(ruleA, ruleB);
+          
+        })
+      });
+      
+    }
+
     // todo: rule intersection ( if a candidate only exists in teh colliosion of one rule and another, then it must be within that collision in the other one as well)
 
     if( mutations ){
+      console.log("commiting new state", count);
       updateBoardHistory(newBoardData, count, `rules-${count}`);
     }
      //remove impossible candidates
@@ -236,6 +288,40 @@ function App() {
           updateBoardHistory(newBoardData, spot, `set-value-${number}`);
       }
   }
+  const accept = () => {
+    // set answers to thier only accepted values
+
+
+    // mode = 0: update Candidates
+    // mode = 0; update Answers
+    /* On some updates ( selection reset update ), we want to undo to the previous record, and append a new record based on the current selection */
+      let spot = count+1;
+      let newBoardData = [...current.boardData]; 
+      
+      
+      let acceptedCells = newBoardData.filter( (cell) => cell.candidates.filter( c => c!==0).length===1);
+      console.log(acceptedCells);
+      console.log(newBoardData[0].candidates.filter( c => c===0));
+
+      let mutations = 0;
+      // leave old square data references pointing to existing square data from previous record.  be carefule when updating the "current record" to alwatys create a new squaredata value;
+      acceptedCells.forEach( (cell, index, array) => {
+        if( cell.given || cell.answer ){
+          return;
+        }
+        let newSquareData = cloneSquare(cell);
+        let mutated = false;
+        let answer = cell.candidates.find( (c) => c!=0);
+        newSquareData.answer=answer;
+        newBoardData[cell.idx] = newSquareData;
+        mutations = mutations+1;
+        
+      });
+      
+      if( mutations > 0 ){
+          updateBoardHistory(newBoardData, spot, `accept`);
+      }
+  }
   const updateSelectionHistory = (idx, action, clearFlag) => {
 
     
@@ -336,11 +422,11 @@ function App() {
       <button onClick={()=>{
         let newBoardData = [...current.boardData];
         let selectedCellIndexes = newBoardData.filter( (cell) => cell.selected).map( (cell) => cell.idx);
-        let knight = new Knight(newBoardData.map( cell => cell.idx), 1);
+        let knight = new Knight(newBoardData, 1);
         let newRules = [...current.rules, knight];
         updateBoardHistory(newBoardData, count+1, `create knight`, newRules);
       }}>Apply Knights Move</button>
-
+      <button onClick={()=>{accept()}}>Accept</button>
       <Controls onUndoClick={undoHandler} onRedoClick={redoHandler}/>
       <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
       

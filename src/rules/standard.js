@@ -30,6 +30,57 @@ class Standard extends Region  {
         //this.cellIndexes=cells.map(c => c.idx);
     }
 
+    supportsIntersectionSource(){
+        return true;
+    }
+    // if every instance of candidate in ruleB is in the intersection
+    // remove the candidate form all other locations of ruleA
+    applyIntersection(ruleB,newBoardData, cloneSquare){
+        let ruleA = this;
+        if( ruleA === ruleB ){
+            return 0;
+        }
+        if( ! ruleB.supportsIntersectionSource()){
+            return;
+        }
+        let mutated = 0;
+        [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
+          
+            // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
+            let candidate = index+1;
+            let locationB = ruleB.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
+            let intersection = ruleB.cellIndexes.filter( (i) => ruleA.cellIndexes.includes(i));
+            
+
+            if(locationB.every( (i) => intersection.includes(i) )){
+              // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
+              // all cells in ruleB, if B is a 'unique' rule;
+              // but not all 
+              console.log("We have found an itersection of ", candidate, locationB, intersection);
+              // remove candidate from all other locations in ruleB
+
+              this.cellIndexes.forEach( (cellIdx) => {
+                  if( intersection.includes(cellIdx) ){
+                      return;
+                  }
+                let immutableSquare = newBoardData[cellIdx];
+                let replacementCandidates = [...immutableSquare.candidates];
+                
+                let newSquareData = cloneSquare(immutableSquare);
+                mutated=1;
+                console.log("Removing candidate <C> from index <i>", candidate, cellIdx)
+                newSquareData.candidates = replacementCandidates.map( (c) =>  c===candidate?0:c);
+                console.log(newSquareData.candidates);
+                newBoardData[cellIdx]=newSquareData;
+                });
+
+            }
+            
+        });
+
+        return mutated;
+    }
+   
     // cloneSquare function allows us to create new square object to prevent mutating the old version
     // pass a mutate function istead that will coder the clone and board updatge in the parent?
     apply(mutableBoardData, cloneSquare){
