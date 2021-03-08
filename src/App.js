@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Region from "./rules/region";
 import './App.css';
 import Board from './Board'
+import Region from "./rules/region";
+import Standard from "./rules/standard";
 
+import Cage from './rules/cage';
+import Knight from './rules/knight';
 // snyder notation - puts a mark on the cell if the candidate can ONLY go in 2 cells
 // if we get 2 snyder marks ( i.e 7,9 on 2 squares, those must be eliminated form other cells)
 // Center marks are the only candidates that are possible in a ceell, as opposed to the only cells that are possible for a candidate
@@ -27,12 +30,12 @@ function startingState(){
       idx: index
     };
   } );
-  let columnRules = Array(9).fill(0).map( (a,y) => Region.fromRectangle(y,0,1,9, boardData) ) ;
-  let rowRules = Array(9).fill(0).map( (a,x) => Region.fromRectangle(0,x,9,1, boardData) ) ;
+  let columnRules = Array(9).fill(0).map( (a,y) => Standard.fromRectangle(y,0,1,9, boardData) ) ;
+  let rowRules = Array(9).fill(0).map( (a,x) => Standard.fromRectangle(0,x,9,1, boardData) ) ;
   let boxRules = Array(9).fill(0).map( (a,b) => {
     let y = 3 * Math.floor(b/3);
     let x = 3 * (b % 3 );
-   let r = Region.fromRectangle(y,x,3,3, boardData);
+   let r = Standard.fromRectangle(y,x,3,3, boardData);
     return r;
   });  
 
@@ -56,7 +59,7 @@ function App() {
   const undoHandler = (e) =>{ if( count ){ setCount(count-1)}};
   const redoHandler = (e) =>{ if( count+1 < history.length ){ setCount(count+1)}};
 
-  
+  // change this to accept a response from the apply function, I don't like having apply mutate the board directly
   const applyRules = (newBoardData, selectedCellIndexes=[]) => {
     if( ! newBoardData ){
       newBoardData=[...current.boardData];
@@ -322,6 +325,21 @@ function App() {
       <input type="text" name="exportString" id="exportString"/>
       <br />
       <button onClick={()=>{setMode(1-mode)}}>Change mode from '{mode?'Cell':'Corner'}' to '{mode?'Corner':'Cell'}'</button>
+      <br />
+      <button onClick={()=>{
+        let newBoardData = [...current.boardData];
+        let selectedCellIndexes = newBoardData.filter( (cell) => cell.selected).map( (cell) => cell.idx);
+        let cage = new Cage(selectedCellIndexes);
+        let newRules = [...current.rules, cage];
+        updateBoardHistory(newBoardData, count+1, `create cage`, newRules);
+      }}>Create Cage</button>
+      <button onClick={()=>{
+        let newBoardData = [...current.boardData];
+        let selectedCellIndexes = newBoardData.filter( (cell) => cell.selected).map( (cell) => cell.idx);
+        let knight = new Knight(newBoardData.map( cell => cell.idx), 1);
+        let newRules = [...current.rules, knight];
+        updateBoardHistory(newBoardData, count+1, `create knight`, newRules);
+      }}>Apply Knights Move</button>
 
       <Controls onUndoClick={undoHandler} onRedoClick={redoHandler}/>
       <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />

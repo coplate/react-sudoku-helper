@@ -67,6 +67,9 @@
 .corner-style-highlight {
   background-color: lime;
 }
+.corner-style-prepare {
+  background-color: yellow;
+}
 .snyder:hover {
   cursor: pointer;
 }
