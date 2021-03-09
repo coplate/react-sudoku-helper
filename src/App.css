@@ -44,6 +44,11 @@
   justify-items: start;
   top: 25%;
 }
+.cageValue {
+  top: 0%;
+  left: 20%;
+  text-align: left;
+}
 .snyder {
   top: 0%;
   left: 20%;

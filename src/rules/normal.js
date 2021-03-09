@@ -53,6 +53,7 @@ class Normal extends Region  {
                     let solvedIndexes = this.cellIndexes.filter( cIdx => (mutableBoardData[cIdx].given||mutableBoardData[cIdx].answer) === candidate  );
                     solvedIndexes.forEach( (solvedIndex) => {
                         if( this.sameBox(cellIdx,solvedIndex) || this.sameRow(cellIdx,solvedIndex) || this.sameColumn(cellIdx,solvedIndex)){
+                            console.log("Removing value from square", cIndex, cellIdx);
                             replacementCandidates[cIndex] = 0;
                             mutations = mutations+1;
                         }
@@ -94,6 +95,7 @@ class Normal extends Region  {
             
             if( mutations>0 ){
                 let newSquareData = cloneSquare(immutableSquare);
+                console.log("Removing value from square");
                 newSquareData.candidates = replacementCandidates;
                 
                 mutableBoardData[cellIdx]=newSquareData;

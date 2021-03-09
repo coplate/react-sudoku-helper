@@ -13,8 +13,28 @@ import Normal from './rules/normal';
 // Center marks are the only candidates that are possible in a ceell, as opposed to the only cells that are possible for a candidate
 
 function Controls(props) {
-  return <div><button onClick={props.onUndoClick}>Undo</button><button onClick={props.onRedoClick}>Redo</button></div>
+
+
+
+  return <div>
+    <button onClick={(e) => props.clickDispatcher(e, 'mode')}> Toggle mode ( {props.mode?"Cell":"Candidate"}) </button>
+    <button onClick={(e) => props.clickDispatcher(e, 'undo')}>Undo</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'redo')}>Redo</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9") )}>Create Cage</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'chess', 'knight', prompt("Match Distance", "0"))}>Apply Knights Move</button>
+  </div>
   
+}
+
+function cloneSquare(squareData){
+  let newSquareData = {
+    ...squareData,
+    candidates: [...squareData.candidates],
+  };
+  newSquareData.cloneSquare = () => cloneSquare(newSquareData);
+  return newSquareData;
+
 }
 // I am having troubles with nested items failing to be replaced
 // so I lifted up all the nested parts of the squareData, and now the state will have seperate values for 
@@ -25,12 +45,16 @@ function startingState(){
   [...Array(9*9).fill(null)].forEach( (value, index, array) => {
     let candidates = [...Array(9).keys()].map(k=>k+1);
     boardData[index] = {
+      cloneSquare: null,
       given: 0, 
       answer: 0, 
       candidates: candidates, 
       selected: false, 
-      idx: index
+      idx: index,
+      cageValue: null,
+      cageFlags: 0
     };
+    boardData.cloneSquare = () => {  };
   } );
   let columnRules = Array(9).fill(0).map( (a,y) => Standard.fromRectangle(y,0,1,9, boardData) ) ;
   let rowRules = Array(9).fill(0).map( (a,x) => Standard.fromRectangle(0,x,9,1, boardData) ) ;
@@ -50,6 +74,9 @@ function startingState(){
     "lastAction": ""
   };
 }
+
+
+
 function App() {
   
   const [mode, setMode] = useState(1);
@@ -57,16 +84,58 @@ function App() {
   const [history, setHistory] = useState( () => [  startingState() ] );
   const current = history[count];
 
-  
+  const applyNewRule = (newBoardData, newRule) => {
+    updateBoardHistory(newBoardData, count+1, `create new`, newRule);
+  }
   //TODO: gracefully handle selections between actions - reqind or fastforward through them as appropriate - or run a clearselection on them
-  const undoHandler = (e) =>{ if( count ){ setCount(count-1)}};
-  const redoHandler = (e) =>{ if( count+1 < history.length ){ setCount(count+1)}};
+  const clickDispatcher = (e, command,  ...props) => {
+    switch(command){
 
+      case "undo":
+        if( count ){ setCount(count-1);}
+        break;
+      case "redo":
+        if( count+1 < history.length ){ setCount(count+1);}
+        break;
+      case "accept":
+        accept();
+        break;
+      case "mode":
+        setMode(1-mode);
+        break;
+      case "cage":
+        {
+          let [value, ...p] = [...props];
+          let newBoardData = [...current.boardData];
+          let selectedCells = newBoardData.filter( (cell) => cell.selected);
+          let exact = window.confirm("exact?");
+          let cage = new Cage(selectedCells, true, value);
+          applyNewRule(newBoardData, cage);
+        }
+        break;
+      case "chess":
+        {
+          let [chessPiece, parameter, ...p] = [...props];
+          let newBoardData = [...current.boardData];
+          
+          let knight = new Knight(newBoardData, parameter);
+          applyNewRule(newBoardData, knight);
+        }
+        
+        break;
+    }
+  }
+
+  
+
+  
   // change this to accept a response from the apply function, I don't like having apply mutate the board directly
   const applyRules = (newBoardData, selectedCellIndexes=[]) => {
+    
     if( ! newBoardData ){
       newBoardData=[...current.boardData];
     }
+    
     if( current.lastAction.startsWith("select")){
       return;
     }
@@ -100,23 +169,22 @@ function App() {
               let candidate = index+1;
               let locationA = ruleA.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
               let locationB = ruleB.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
-              let intersection = ruleA.cellIndexes.filter( (i) => ruleB.cellIndexes.includes(i));
-              
+              let intersection = locationA.filter( (i) => locationB.includes(i));
+              if( intersection.length == 0){
+                return;
+              }
               if(locationA.every( (i) => intersection.includes(i) )){
                 // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
                 // all cells in ruleB, if B is a 'unique' rule;
                 // but not all 
                 if( locationB.length > intersection.length){
-                  //console.log("action, mutations", current.lastAction, mutations);
-                  //console.log("We have found an itersection of ", candidate, locationA, intersection);
                   //removing it
                   ruleB.cellIndexes.forEach((c)=>{
                     if(! intersection.includes(c)){
-                      //console.log("Removing it from rulB", c);
-                      //console.log(locationB);
                       //mutations = mutations+1;
                       
                           let newSquareData = cloneSquare(newBoardData[c]);
+                          console.log("Removing value from square becasue of intersection logic", indexA, indexB, locationA, locationB, intersection);
                           newSquareData.candidates = newSquareData.candidates.map( (i)=> i==candidate?0:i);
                           mutations = mutations+1;
                           newBoardData[c]=newSquareData;
@@ -137,7 +205,6 @@ function App() {
     // todo: rule intersection ( if a candidate only exists in teh colliosion of one rule and another, then it must be within that collision in the other one as well)
 
     if( mutations ){
-      console.log("commiting new state", count);
       updateBoardHistory(newBoardData, count, `rules-${count}`);
     }
      //remove impossible candidates
@@ -217,22 +284,24 @@ function App() {
     
   
   }
-  const cloneSquare = (squareData) => {
-    let newSquareData = {
-      ...squareData,
-      candidates: [...squareData.candidates],
-    };
-    return newSquareData;
-  }
+  
   const extractClonedSquare = (idx) => {
     let squareData = current.boardData[idx];
     return cloneSquare(squareData);
   
   }
-  const updateBoardHistory = (newBoardData, spot, action, newRules=null)=>{
+  const updateBoardHistory = (newBoardData, spot, action, newRule=null)=>{
+    // If the new Rules have modified newBoardData in thier constructor, this will catch it.
+
+    let rules = [...current.rules];
+    if( newRule){
+      rules.push(newRule);
+      newRule.setFlags(newBoardData);
+    }
+    
     setHistory( [...history.slice(0,spot), {
       "boardData":newBoardData, 
-      "rules": newRules || current.rules,
+      "rules": rules,
       "index": newBoardData.index,
       lastAction: action
     }]);
@@ -284,7 +353,6 @@ function App() {
       if( mutations > 0 ){
 
         //applyRules(newBoardData, selectedCellIndexes);
-        
           updateBoardHistory(newBoardData, spot, `set-value-${number}`);
       }
   }
@@ -300,8 +368,6 @@ function App() {
       
       
       let acceptedCells = newBoardData.filter( (cell) => cell.candidates.filter( c => c!==0).length===1);
-      console.log(acceptedCells);
-      console.log(newBoardData[0].candidates.filter( c => c===0));
 
       let mutations = 0;
       // leave old square data references pointing to existing square data from previous record.  be carefule when updating the "current record" to alwatys create a new squaredata value;
@@ -410,24 +476,8 @@ function App() {
       <br />
       <input type="text" name="exportString" id="exportString"/>
       <br />
-      <button onClick={()=>{setMode(1-mode)}}>Change mode from '{mode?'Cell':'Corner'}' to '{mode?'Corner':'Cell'}'</button>
-      <br />
-      <button onClick={()=>{
-        let newBoardData = [...current.boardData];
-        let selectedCellIndexes = newBoardData.filter( (cell) => cell.selected).map( (cell) => cell.idx);
-        let cage = new Cage(selectedCellIndexes);
-        let newRules = [...current.rules, cage];
-        updateBoardHistory(newBoardData, count+1, `create cage`, newRules);
-      }}>Create Cage</button>
-      <button onClick={()=>{
-        let newBoardData = [...current.boardData];
-        let selectedCellIndexes = newBoardData.filter( (cell) => cell.selected).map( (cell) => cell.idx);
-        let knight = new Knight(newBoardData, 1);
-        let newRules = [...current.rules, knight];
-        updateBoardHistory(newBoardData, count+1, `create knight`, newRules);
-      }}>Apply Knights Move</button>
-      <button onClick={()=>{accept()}}>Accept</button>
-      <Controls onUndoClick={undoHandler} onRedoClick={redoHandler}/>
+      
+      <Controls clickDispatcher={clickDispatcher.bind(this)} mode={mode}/>
       <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
       
     </div>

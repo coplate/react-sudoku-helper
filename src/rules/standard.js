@@ -138,6 +138,7 @@ class Standard extends Region  {
                 if( candidate > 0 ){
 
                     if(this.solved(mutableBoardData, candidate, cellIdx)){
+                        
                         replacementCandidates[cIndex] = 0;
                         mutations = mutations+1;
                     }
@@ -151,6 +152,7 @@ class Standard extends Region  {
             //then this candidate must also exist within said intersection on this rule!
             if( mutations>0 ){
                 let newSquareData = cloneSquare(immutableSquare);
+                console.log("Removing value from square");
                 newSquareData.candidates = replacementCandidates;
                 
                 mutableBoardData[cellIdx]=newSquareData;

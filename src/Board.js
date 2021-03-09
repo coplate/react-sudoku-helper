@@ -92,7 +92,19 @@ function Given(props){
     )  
     
   }
+  // AKA Canvas
   function Interactor(props){
+    if( props.squareData.cageValue != null ){
+      return (
+        <div className={`interactor cell-child`} >
+          <div className={"cageValue"} >
+            {props.squareData.cageValue}
+          </div>
+        </div>
+    
+      )
+    
+    }
     return null;
     
   }

@@ -7,7 +7,7 @@ class Knight extends Region{
 
     constructor(cells, matchDistance=0) {
         super(cells);
-        this.matchDistance = matchDistance;
+        this.matchDistance = parseInt(matchDistance);
     }
 
     apply(mutableBoardData, cloneSquare){
@@ -41,6 +41,7 @@ class Knight extends Region{
                         return false;
                     });
                     if( solvedIndex){
+                        console.log("Removing value from square", cIndex, cellIdx);
                         replacementCandidates[cIndex] = 0;
                         mutations = mutations+1;
                     }
@@ -54,6 +55,7 @@ class Knight extends Region{
 
             if( mutations>0 ){
                 let newSquareData = cloneSquare(immutableSquare);
+                console.log("Removing value from square");
                 newSquareData.candidates = replacementCandidates;
                 
                 mutableBoardData[cellIdx]=newSquareData;
