@@ -32,8 +32,8 @@ class Knight extends Region{
                     let solvedIndex = this.cellIndexes.some( cIdx => {
                         let comparedKnown = mutableBoardData[cIdx].given || mutableBoardData[cIdx].answer;
                         if( comparedKnown !== 0){
-                            if( Math.abs( comparedKnown - candidate) == this.matchDistance ){
-                                if(  Math.abs( (Math.floor(cIdx/9)-y) * ((cIdx % 9)-x) )== 2){
+                            if( Math.abs( comparedKnown - candidate) === this.matchDistance ){
+                                if(  Math.abs( (Math.floor(cIdx/9)-y) * ((cIdx % 9)-x) )=== 2){
                                     return true;
                                 }
                             }

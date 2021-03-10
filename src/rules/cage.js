@@ -27,16 +27,7 @@ class Cage extends Region{
         // in a classic cage, everythign is unique, and there is a sum;
         
 
-        let removeOther = (replacementCandidates, known) => {
-            let otherMutations = 0;
-            replacementCandidates.forEach( (c,i,a) =>{
-                if( c > 0 && c !== known ){
-                    a[i]=0;
-                    otherMutations = otherMutations+1;
-                }
-            });
-            return otherMutations;
-        }
+
 
         //5..2...4....6.3....3...9..7..3..7.....7..8...6......2..8......3...4..6.....1..5..
         let mutations = 0;
@@ -61,7 +52,7 @@ class Cage extends Region{
                 replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                     
                     if( candidate > 0 ){
-                        let solvedIndex = this.cellIndexes.filter( (i) => i!=cellIdx).some( cIdx => (mutableBoardData[cIdx].given||mutableBoardData[cIdx].answer) === candidate  );
+                        let solvedIndex = this.cellIndexes.filter( (i) => i!==cellIdx).some( cIdx => (mutableBoardData[cIdx].given||mutableBoardData[cIdx].answer) === candidate  );
                         if( solvedIndex){
                             console.log("Removing value from square", cIndex, cellIdx);
                             replacementCandidates[cIndex] = 0;
@@ -85,7 +76,7 @@ class Cage extends Region{
                         
                         
                         let allCandidates = this.cellIndexes.reduce( (a,i) =>{ 
-                            if( cellIdx == i){
+                            if( cellIdx === i){
                                 return [...a];
                             }
                             if( mutableBoardData[i].given||mutableBoardData[i].answer){
@@ -103,24 +94,18 @@ class Cage extends Region{
                         }, [candidate] ); // treat candidate as known for this reduce, so I dont need another if( i==cellIdx)
                         let knownSum = knownCandidates.reduce((a, b) => a + b, 0);
 
-                        if( cellIdx == 48){
-                        console.log(cellIdx,allCandidates, knownSum);
-                        }
+
                         allCandidates = new Set( allCandidates );
                         allCandidates.delete(0);
                         allCandidates.delete(candidate);
                         allCandidates = Array.from(allCandidates).sort();
-                        if( cellIdx == 48){
-                        console.log(allCandidates);
-                        }
+
                         let n = this.cellIndexes.length-knownCandidates.length;
                         let minN = allCandidates.slice(0,n);
                         let maxN = allCandidates.slice(allCandidates.length-n);
                         let minSum =  knownSum + minN.reduce((a, b) => a + b, 0);
                         let maxSum =  knownSum + maxN.reduce((a, b) => a + b, 0)
-                        if( cellIdx == 48){
-                        console.log(minSum,this.value, maxSum);
-                        }
+
                         if( minSum > this.value || this.value > maxSum ){
                             console.log("Removing value from square", cIndex, cellIdx);
                             replacementCandidates[cIndex] = 0;

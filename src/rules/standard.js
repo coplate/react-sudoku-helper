@@ -25,11 +25,11 @@ class Standard extends Region  {
         return new Standard(cells);
     }
     
-    constructor(cells) {
-        super(cells);
-        //this.cellIndexes=cells.map(c => c.idx);
-    }
-
+    // constructor(cells) {
+    //     super(cells);
+    //     //this.cellIndexes=cells.map(c => c.idx);
+    // }
+        //supportsIntersectionSource is effectively - a 9 cell normal sudoku rule
     supportsIntersectionSource(){
         return true;
     }
@@ -124,9 +124,9 @@ class Standard extends Region  {
                 if( candidate > 0 ){
                     let regionSquares = this.cellIndexes.map( i=> mutableBoardData[i]);
                     let regionCandidates = regionSquares.map( s => s.candidates );
-                    let matchingCandidateValues = regionCandidates.map( c => c[cIndex]).filter( c => c != 0);
+                    let matchingCandidateValues = regionCandidates.map( c => c[cIndex]).filter( c => c !== 0);
 
-                    if( matchingCandidateValues.length == 1 ){
+                    if( matchingCandidateValues.length === 1 ){
                         mutations += removeOther(cArray, candidate);
                     }
                 }

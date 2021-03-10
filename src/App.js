@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import Board from './Board'
-import Region from "./rules/region";
 import Standard from "./rules/standard";
 
 import Cage from './rules/cage';
 import Knight from './rules/knight';
+import King from './rules/king';
+import Pawn from './rules/pawn';
 
-import Normal from './rules/normal';
 import LittleKiller from './rules/littleKiller';
 import Canvas from './Canvas';
 // snyder notation - puts a mark on the cell if the candidate can ONLY go in 2 cells
@@ -25,7 +25,10 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
     <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9") )}>Create Cage</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'knight', prompt("Match Distance", "0"))}>Apply Knights Move</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'chess', 'pawn', prompt("Match Distance", "0"))}>Apply pawn Move</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'chess', 'king', prompt("Match Distance", "0"))}>Apply king Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'littleKiller', prompt("Value", "45"))}>Create Little Killer Cage</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'color', prompt("Value", "1"))}>Color digit</button>
   </div>
   
 }
@@ -53,6 +56,7 @@ function startingState(){
       answer: 0, 
       candidates: candidates, 
       selected: false, 
+      color: 0, 
       idx: index,
       cageValue: null,
       cageFlags: 0
@@ -112,8 +116,8 @@ function App() {
       case "cage":
       case "littleKiller":
         {
-          let [value, ...p] = [...props];
-          let exact = window.confirm("exact?");
+          let [value/*, ...p*/] = [...props];
+          //let exact = window.confirm("exact?");
           
           if( command === "cage"){
             newRule = new Cage(selectedCells, true, value);
@@ -125,11 +129,42 @@ function App() {
         break;
       case "chess":
         {
-          let [chessPiece, parameter, ...p] = [...props];
-          newRule = new Knight(newBoardData, parameter);
+          let [chessPiece, parameter/*, ...p*/] = [...props];
+          switch(chessPiece){
+            case "knight":
+              newRule = new Knight(newBoardData, parameter);
+              break;
+            case "king":
+              newRule = new King(newBoardData, parameter);
+              break;
+            case "pawn":
+              newRule = new Pawn(newBoardData, parameter);
+              break;
+            default: break;
+          }
+          
         }
         
         break;
+        case "color":
+          console.log("coloring cells");
+          let [value/*, ...p*/] = [...props];
+
+          newBoardData.forEach( (c,i,a) => { 
+            let n = cloneSquare(c); 
+            let v= parseInt(value);
+            let q = n.candidates.includes(v);
+            console.log(n,v,q) 
+            
+            n.color=q?"blue":"none"; 
+            a[i]=n; 
+            console.log("Change selected", i,a[i].selected) 
+          });
+          updateBoardHistory(newBoardData, count+1, `highlight`);
+          break;
+
+      default: break;
+
     }
     if( newRule ){
       applyNewRule(newBoardData, newRule);
@@ -167,24 +202,71 @@ function App() {
 
     // When it comes to auto-removing values, I also need to consider just marking them as
     if( mutations === 0 ){
+
+
       current.rules.forEach( (ruleA, indexA, arrayA ) => {
         current.rules.forEach( (ruleB, indexB, arrayB ) => {
-          if( ruleA == ruleB ){
+          if( ruleA === ruleB ){
             return;
           }
+
           if(! ( ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource() )){
-          return ;
+            return ;
           // any candidate that only exists in a region, and the places it exists overlap with another region, it must be withing the intersection
           }
+      
+          
+          // I can build a rule inside knight etc, that can conclude - if a candidate being true, makes another region impossible, then it cannot be true - this is a reversal of the way we phrase about an intersction
+          // becasue if the candidate is in RuleB, in a location that is not in the intersection, then ruleA becomes impossible.
+          
           [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
               // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
               let candidate = index+1;
+
+              /*
+              if( candidate => ruleB.impossible)
+
+
+              */
+
               let locationA = ruleA.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
               let locationB = ruleB.cellIndexes.filter( (i) => newBoardData[i].candidates.includes(candidate));
+              
+              
+              
+              
               let intersection = locationA.filter( (i) => locationB.includes(i));
-              if( intersection.length == 0){
+              if( intersection.length === 0){
                 return;
               }
+
+              //something like knights move does not have a standard intersection, however intersections in the other rule are based on the current candidate square
+              
+              // Cages for example,  work ruleA-->B in the context -- If a candidate in the Cage would make the other rule impossible, the candidate must be removed
+              //      Alternatively, ruleB->A -- If all candidates in ruleB intersect with the cage, then the candidate in ruleB must be valid, and in ruleA are forbidden ( same result )
+              // If all candidates in a Normal Rule A exist within the intersection of another Unique Rule B, then all other locations in B must be forbidden
+              // If a particular candidate in Unique Rule A exists outside of the intersection with Standard Rule B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
+
+              // For knights moves
+              // if a particular candidate in knighs Rule A exists outside the of the intersection with Standard RUle B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
+              // AKA - if a particular cnadidate "Sees", all candidates in Standard Rule B, then it mus tbe forbidden.
+              // for knights though, this must work a little differnt - it has to look at the knights move, and the x/y intersections
+              
+
+              
+              // so for candidate N in in a square Y of any number of rules; if N "intersect" with all instances of N in Rule Z, then candidate N must be removed from square Y
+              
+              // 
+              /* 
+              for ruleZ in rules:
+                for squareY in ruleZ:
+                  for candidateN in square:
+                    generate intersection of all rules(Square Y / Candidate N)
+                    if all N in ruleZ are within intersection - N must be removed from  from Y
+
+              */
+
+
               if(locationA.every( (i) => intersection.includes(i) )){
                 // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
                 // all cells in ruleB, if B is a 'unique' rule;
@@ -197,7 +279,7 @@ function App() {
                       
                           let newSquareData = cloneSquare(newBoardData[c]);
                           console.log("Removing value from square becasue of intersection logic", indexA, indexB, locationA, locationB, intersection);
-                          newSquareData.candidates = newSquareData.candidates.map( (i)=> i==candidate?0:i);
+                          newSquareData.candidates = newSquareData.candidates.map( (i)=> i===candidate?0:i);
                           mutations = mutations+1;
                           newBoardData[c]=newSquareData;
                         
@@ -208,7 +290,8 @@ function App() {
               
           });
           //applyIntersection(ruleA, ruleB);
-          
+
+          // If a candidate being true, make a region impossible, then the candidate must be forbidden
         })
       });
       
@@ -350,7 +433,7 @@ function App() {
         let newSquareData = cloneSquare(squareData);
         let mutated = false;
         if( ! newSquareData.given ){
-          if( mode == 0 ){
+          if( mode === 0 ){
             if( newSquareData.candidates[number-1] === number){
               mutated=true;     
               newSquareData.candidates[number-1] = 0;
@@ -396,8 +479,8 @@ function App() {
           return;
         }
         let newSquareData = cloneSquare(cell);
-        let mutated = false;
-        let answer = cell.candidates.find( (c) => c!=0);
+        //let mutated = false;
+        let answer = cell.candidates.find( (c) => c!==0);
         newSquareData.answer=answer;
         newBoardData[cell.idx] = newSquareData;
         mutations = mutations+1;

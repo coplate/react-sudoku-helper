@@ -23,14 +23,14 @@
   visibility: hidden;
 }
 .board-holder {
-  grid-row: 2/11; grid-column: 2/11;
+  /*grid-row: 2/11; grid-column: 2/11;*/
 }
 
 .Board {
   height: 75vmin;
   width: 75vmin;
   
-  overflow: hidden;
+  /* overflow: hidden; */
   text-align: center;
   display: inline-grid;
   grid-template-columns: repeat(9, 1fr);
@@ -48,10 +48,15 @@
   display: flex;
   min-height: 10ch;
   min-width: 10ch;
+  background-color: white;
 
 }
-.cell.selected {
+.cell-color-blue {
   background-color: lightgreen;
+}
+.cell.selected {
+  
+  filter: hue-rotate(15deg) invert(15%);
 }
 .cell-child {
   position: absolute;

@@ -28,19 +28,19 @@ function Given(props){
     return null;
   }
 
-  function Notes(props){
-    return (
-      <div className="notes cell-child" >
-        {
-          [...Array(9).keys()].map( note => {
-            return <div key={`note-${note}`} className={`note note-${note} numeric`} >{note+1}</div>
-          })
-        }
-      </div>
+  // function Notes(props){
+  //   return (
+  //     <div className="notes cell-child" >
+  //       {
+  //         [...Array(9).keys()].map( note => {
+  //           return <div key={`note-${note}`} className={`note note-${note} numeric`} >{note+1}</div>
+  //         })
+  //       }
+  //     </div>
   
-    )  
+  //   )  
     
-  }
+  // }
   
   function Snyder(props){
     let candidates = props.squareData.candidates;
@@ -84,7 +84,7 @@ function Given(props){
             }else{
                 return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  ></div>;
             }
-            return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  >{candidate}</div>
+//            return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  >{candidate}</div>
           })
         }
       </div>
@@ -111,8 +111,9 @@ function Given(props){
   
   function Square(props){
     let selected=(props.squareData.selected)?"selected":"";
+    let color = (props.squareData.color)?props.squareData.color:"none";
     return (
-      <div id={`cell-${props.idx}`} className = {`cell cell-${props.idx} row-${props.row} column-${props.column} ${selected}`} onClick={props.onClick(props)} onMouseMove={props.squareDragHandler(props)}  onMouseDown={props.onMouseDown(props)}  >
+      <div id={`cell-${props.idx}`} className = {`cell cell-${props.idx} row-${props.row} column-${props.column} ${selected} cell-color-${color}`} onClick={props.onClick(props)} onMouseMove={props.squareDragHandler(props)}  onMouseDown={props.onMouseDown(props)}  >
         <Candidates {...props} />
         <Snyder {...props} />
         {

@@ -11,10 +11,10 @@ class Normal extends Region  {
     sameColumn(a,b){
         return (a%9) ===(b%9);
     }
-    constructor(cells) {
-        super(cells);
-        //this.cellIndexes=cells.map(c => c.idx);
-    }
+    // constructor(cells) {
+    //     super(cells);
+    //     //this.cellIndexes=cells.map(c => c.idx);
+    // }
     removeOther (replacementCandidates, known)  {
         let otherMutations = 0;
         replacementCandidates.forEach( (c,i,a) =>{
@@ -36,9 +36,9 @@ class Normal extends Region  {
             let immutableSquare = mutableBoardData[cellIdx];
             let replacementCandidates = [...immutableSquare.candidates];
             let known = immutableSquare.given || immutableSquare.answer;
-            let x = cellIdx % 9;
-            let y = Math.floor(cellIdx/9);
-            let b = Math.floor(x/3) + 10*Math.floor(y/3) ;// 00,01,02; 10,11,10, 20,21,22
+            // let x = cellIdx % 9;
+            // let y = Math.floor(cellIdx/9);
+            // let b = Math.floor(x/3) + 10*Math.floor(y/3) ;// 00,01,02; 10,11,10, 20,21,22
             
             // if this cell is solved, remove all other candidates
             if( known){
@@ -75,15 +75,15 @@ class Normal extends Region  {
                     let rowIndexes = this.cellIndexes.filter( cIdx => this.sameRow(cellIdx, cIdx) );
                     let boxIndexes = this.cellIndexes.filter( cIdx => this.sameBox(cellIdx, cIdx) );
                     
-                    if( columnIndexes.filter(cIdx => (mutableBoardData[cIdx].candidates.includes(candidate)) ).length == 1 ){
+                    if( columnIndexes.filter(cIdx => (mutableBoardData[cIdx].candidates.includes(candidate)) ).length === 1 ){
                         mutations = mutations + this.removeOther(cArray, candidate );
                         
                     }
-                    if( rowIndexes.filter(cIdx => (mutableBoardData[cIdx].candidates.includes(candidate)) ).length == 1){
+                    if( rowIndexes.filter(cIdx => (mutableBoardData[cIdx].candidates.includes(candidate)) ).length === 1){
                         mutations = mutations + this.removeOther(cArray, candidate);
                         
                     }
-                    if( boxIndexes.filter(boxIndex => (mutableBoardData[boxIndex].candidates.includes(candidate)) ).length == 1){
+                    if( boxIndexes.filter(boxIndex => (mutableBoardData[boxIndex].candidates.includes(candidate)) ).length === 1){
                         mutations = mutations + this.removeOther(cArray, candidate);
                         
                     }
