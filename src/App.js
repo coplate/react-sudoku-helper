@@ -8,6 +8,8 @@ import Cage from './rules/cage';
 import Knight from './rules/knight';
 
 import Normal from './rules/normal';
+import LittleKiller from './rules/littleKiller';
+import Canvas from './Canvas';
 // snyder notation - puts a mark on the cell if the candidate can ONLY go in 2 cells
 // if we get 2 snyder marks ( i.e 7,9 on 2 squares, those must be eliminated form other cells)
 // Center marks are the only candidates that are possible in a ceell, as opposed to the only cells that are possible for a candidate
@@ -23,6 +25,7 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
     <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9") )}>Create Cage</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'knight', prompt("Match Distance", "0"))}>Apply Knights Move</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'littleKiller', prompt("Value", "45"))}>Create Little Killer Cage</button>
   </div>
   
 }
@@ -89,6 +92,9 @@ function App() {
   }
   //TODO: gracefully handle selections between actions - reqind or fastforward through them as appropriate - or run a clearselection on them
   const clickDispatcher = (e, command,  ...props) => {
+    let newRule = null;
+    let newBoardData = [...current.boardData];
+    let selectedCells = newBoardData.filter( (cell) => cell.selected);
     switch(command){
 
       case "undo":
@@ -104,25 +110,29 @@ function App() {
         setMode(1-mode);
         break;
       case "cage":
+      case "littleKiller":
         {
           let [value, ...p] = [...props];
-          let newBoardData = [...current.boardData];
-          let selectedCells = newBoardData.filter( (cell) => cell.selected);
           let exact = window.confirm("exact?");
-          let cage = new Cage(selectedCells, true, value);
-          applyNewRule(newBoardData, cage);
+          
+          if( command === "cage"){
+            newRule = new Cage(selectedCells, true, value);
+          }
+          if( command === "littleKiller"){
+            newRule = new LittleKiller(selectedCells, true, value);
+          }
         }
         break;
       case "chess":
         {
           let [chessPiece, parameter, ...p] = [...props];
-          let newBoardData = [...current.boardData];
-          
-          let knight = new Knight(newBoardData, parameter);
-          applyNewRule(newBoardData, knight);
+          newRule = new Knight(newBoardData, parameter);
         }
         
         break;
+    }
+    if( newRule ){
+      applyNewRule(newBoardData, newRule);
     }
   }
 
@@ -155,6 +165,7 @@ function App() {
       
     });
 
+    // When it comes to auto-removing values, I also need to consider just marking them as
     if( mutations === 0 ){
       current.rules.forEach( (ruleA, indexA, arrayA ) => {
         current.rules.forEach( (ruleB, indexB, arrayB ) => {
@@ -163,6 +174,7 @@ function App() {
           }
           if(! ( ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource() )){
           return ;
+          // any candidate that only exists in a region, and the places it exists overlap with another region, it must be withing the intersection
           }
           [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
               // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
@@ -222,6 +234,8 @@ function App() {
       }
     }
     
+
+
   }
   let captureKeys = () => {
     document.addEventListener("keydown", keyPressHandler);
@@ -260,9 +274,15 @@ function App() {
   }
   const squareMouseDownHandler  = (props) => (event) => {
     /* Clear all selections and set current square to selected */
-
+    let clear = true;
     event.preventDefault();
-    select(props, "squareMouseDownHandler", true);
+    if( event.ctrlKey ){
+      if( current.boardData[props.idx].selected){
+        return;
+      }  
+      clear=false;
+    }
+    select(props, "squareMouseDownHandler", clear);
     
 
   };
@@ -478,8 +498,9 @@ function App() {
       <br />
       
       <Controls clickDispatcher={clickDispatcher.bind(this)} mode={mode}/>
-      <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
-      
+      <Canvas>
+        <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
+      </Canvas>
     </div>
   
   );

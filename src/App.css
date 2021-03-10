@@ -1,8 +1,38 @@
+
+#appDiv {
+  display: flex; /* or inline-flex */
+  flex-direction: row;
+}
+#controlDiv {
+  display: inline-block;
+}
+#twoDiv {
+  display: inline-block;
+}
+
+.canvas-holder {
+  display: inline-grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  
+
+}
+.abc{
+  min-height: 10ch;
+  min-width: 10ch;
+  visibility: hidden;
+}
+.board-holder {
+  grid-row: 2/11; grid-column: 2/11;
+}
+
 .Board {
   height: 75vmin;
   width: 75vmin;
+  
+  overflow: hidden;
   text-align: center;
-  display: grid;
+  display: inline-grid;
   grid-template-columns: repeat(9, 1fr);
   
 }

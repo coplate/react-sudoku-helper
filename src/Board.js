@@ -128,15 +128,17 @@ function Given(props){
   
   function Board(props){
     return (
-      <div className="Board">
-        {
-          [...Array(9).keys()].map( row => {
-            return [...Array(9).keys()].map( column => {
-              let idx = column + (9* row);
-              return <Square key={idx} {...props} row = {row} column={column} idx={idx} squareData={props.boardData[idx]}/>
+      <div className="board-holder">
+        <div className="Board">
+          {
+            [...Array(9).keys()].map( row => {
+              return [...Array(9).keys()].map( column => {
+                let idx = column + (9* row);
+                return <Square key={idx} {...props} row = {row} column={column} idx={idx} squareData={props.boardData[idx]}/>
+              })
             })
-          })
-        }
+          }
+        </div>
       </div>
     );
   }
