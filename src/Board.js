@@ -1,3 +1,5 @@
+import Thermometer from './Thermometer'
+
 function Given(props){
     
     if( props.squareData.given ){
@@ -18,7 +20,7 @@ function Given(props){
     
     if( props.squareData.answer ){
       return (
-        <div className={`answer numeric cell-child`} >
+        <div className={`answer numeric  cell-child`} >
           {props.squareData.answer}
         </div>
     
@@ -28,19 +30,6 @@ function Given(props){
     return null;
   }
 
-  // function Notes(props){
-  //   return (
-  //     <div className="notes cell-child" >
-  //       {
-  //         [...Array(9).keys()].map( note => {
-  //           return <div key={`note-${note}`} className={`note note-${note} numeric`} >{note+1}</div>
-  //         })
-  //       }
-  //     </div>
-  
-  //   )  
-    
-  // }
   
   function Snyder(props){
     let candidates = props.squareData.candidates;
@@ -52,7 +41,7 @@ function Given(props){
 
 
     return (
-      <div className="snyder cell-child" >
+      <div className={`snyder cell-child`} >
         {
           props.squareData.candidates.map( (value, corner) => {
             let style = 'hide';
@@ -72,57 +61,17 @@ function Given(props){
     )  
     
   }
-  function Candidates(props){
-    return (
-      <div className="candidates cell-child" onClick={props.onClick("Candidates")}>
-        {
-          
-          props.squareData.candidates.map( (candidate, index) => {
-            
-            if( candidate === 0){
-                return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  ></div>;
-            }else{
-                return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  ></div>;
-            }
-//            return <div key={`candidate-${index}`} className={`candidate candidate-${index} numeric`}  >{candidate}</div>
-          })
-        }
-      </div>
-  
-    )  
-    
-  }
-  // AKA Canvas
-  function Interactor(props){
-    if( props.squareData.cageValue != null ){
-      return (
-        <div className={`interactor cell-child`} >
-          <div className={"cageValue"} >
-            {props.squareData.cageValue}
-          </div>
-        </div>
-    
-      )
-    
-    }
-    return null;
-    
-  }
   
   function Square(props){
     let selected=(props.squareData.selected)?"selected":"";
     let color = (props.squareData.color)?props.squareData.color:"none";
     return (
       <div id={`cell-${props.idx}`} className = {`cell cell-${props.idx} row-${props.row} column-${props.column} ${selected} cell-color-${color}`} onClick={props.onClick(props)} onMouseMove={props.squareDragHandler(props)}  onMouseDown={props.onMouseDown(props)}  >
-        <Candidates {...props} />
-        <Snyder {...props} />
-        {
-        //<Notes {...props} />
-        }
-        <Interactor {...props} />
-        <Answer {...props} />
-        <Given {...props} />
-      </div>
+       <Given {...props} />
+       <Answer {...props} />
+       <Snyder {...props} />
+       
+       </div>
     );
   
   }
@@ -132,6 +81,11 @@ function Given(props){
       <div className="board-holder">
         <div className="Board">
           {
+            props.rules.map(rule => rule.component())
+          }
+          
+          <div className="cell-holder">
+          {
             [...Array(9).keys()].map( row => {
               return [...Array(9).keys()].map( column => {
                 let idx = column + (9* row);
@@ -139,9 +93,20 @@ function Given(props){
               })
             })
           }
+          </div>
         </div>
       </div>
     );
   }
 
+  /*
+          <Candidates {...props} />
+        <Snyder {...props} />
+        {
+        //<Notes {...props} />
+        }
+        <Answer {...props} />
+        <Given {...props} />
+
+        */
   export default Board;

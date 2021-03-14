@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
+import './App.scss';
 import Board from './Board'
 import Standard from "./rules/standard";
 
@@ -7,6 +7,7 @@ import Cage from './rules/cage';
 import Knight from './rules/knight';
 import King from './rules/king';
 import Pawn from './rules/pawn';
+import Thermometer from './rules/thermometer';
 
 import LittleKiller from './rules/littleKiller';
 import Canvas from './Canvas';
@@ -24,6 +25,7 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'redo')}>Redo</button>
     <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
     <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9") )}>Create Cage</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'thermometer' )}>Thermometer</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'knight', prompt("Match Distance", "0"))}>Apply Knights Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'pawn', prompt("Match Distance", "0"))}>Apply pawn Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'king', prompt("Match Distance", "0"))}>Apply king Move</button>
@@ -78,6 +80,7 @@ function startingState(){
     "boardData": boardData,
     "rules": rules,
     "index": 0,
+    "selection":[],
     "lastAction": ""
   };
 }
@@ -98,7 +101,7 @@ function App() {
   const clickDispatcher = (e, command,  ...props) => {
     let newRule = null;
     let newBoardData = [...current.boardData];
-    let selectedCells = newBoardData.filter( (cell) => cell.selected);
+    let selectedCells = current.selection.map( i => newBoardData[i]);
     switch(command){
 
       case "undo":
@@ -112,6 +115,9 @@ function App() {
         break;
       case "mode":
         setMode(1-mode);
+        break;
+      case "thermometer":
+        newRule = new Thermometer(selectedCells);
         break;
       case "cage":
       case "littleKiller":
@@ -209,7 +215,7 @@ function App() {
           if( ruleA === ruleB ){
             return;
           }
-
+return;
           if(! ( ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource() )){
             return ;
           // any candidate that only exists in a region, and the places it exists overlap with another region, it must be withing the intersection
@@ -393,9 +399,13 @@ function App() {
     return cloneSquare(squareData);
   
   }
-  const updateBoardHistory = (newBoardData, spot, action, newRule=null)=>{
+  const updateBoardHistory = (newBoardData, spot, action, newRule=null, newSelections)=>{
     // If the new Rules have modified newBoardData in thier constructor, this will catch it.
 
+    let selections = [...current.selection];
+    if( newSelections ){
+      selections=newSelections;
+    }
     let rules = [...current.rules];
     if( newRule){
       rules.push(newRule);
@@ -406,7 +416,8 @@ function App() {
       "boardData":newBoardData, 
       "rules": rules,
       "index": newBoardData.index,
-      lastAction: action
+      lastAction: action,
+      "selection":selections
     }]);
     setCount(spot);
     
@@ -505,6 +516,7 @@ function App() {
       let newBoardData = [...current.boardData]; // equal to current unless we change spot from  count+1 to count;
       // if click - clear all the selections
 
+      let selections = [...current.selection];
       if( clearFlag ) {
         newBoardData.forEach( (squareData, index, array) => {
           if( squareData.selected ){
@@ -513,13 +525,14 @@ function App() {
             array[index] = newSquareData;
           }
         });
+        selections=[];
       }
       
       // leave old square data references pointing to existing square data from previous record.  be carefule when updating the "current record" to alwatys create a new squaredata value;
       let newSquareData = extractClonedSquare(idx) ;
       newSquareData.selected = true;
       newBoardData[idx]=newSquareData;
-      updateBoardHistory(newBoardData, spot, action);
+      updateBoardHistory(newBoardData, spot, action, null, [...selections, idx]);
 
   }
   return (
@@ -582,7 +595,7 @@ function App() {
       
       <Controls clickDispatcher={clickDispatcher.bind(this)} mode={mode}/>
       <Canvas>
-        <Board boardData={current.boardData} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
+        <Board boardData={current.boardData} rules={current.rules} onMouseDown={squareMouseDownHandler} onClick={squareClickHandler} snyderClickHandler={snyderClickHandler} squareDragHandler={squareDragHandler} />
       </Canvas>
     </div>
   

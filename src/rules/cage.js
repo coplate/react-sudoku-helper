@@ -1,4 +1,5 @@
 import Region from "./region";
+import CageComponent from "../Cage";
 
 class Cage extends Region{
 
@@ -7,6 +8,9 @@ class Cage extends Region{
 
         this.exact = exact;
         this.value = parseInt(value);
+    }
+    component(){
+        return <CageComponent cells={[...this.cellIndexes]} />;
     }
 
     setFlags(newBoardData){
@@ -65,7 +69,9 @@ class Cage extends Region{
             }     
 
                         
-                        
+                // This has a defect when it crosses boundries, since you CAN have repeats then.
+
+                // need to honor the unique flag
               //also for exeact matches is: if a candidate is too big, or too small to work, remove it
               if( this.exact ){
                 replacementCandidates.forEach( (candidate, cIndex, cArray) => {
@@ -74,7 +80,7 @@ class Cage extends Region{
                         // if the cage is [  1,5 ; 1,2 ; 1,9; 1/6 ] we need to maksu sure that the 2nd value is considered
                         // alternatively, join all candidates
                         
-                        
+
                         let allCandidates = this.cellIndexes.reduce( (a,i) =>{ 
                             if( cellIdx === i){
                                 return [...a];
@@ -84,6 +90,7 @@ class Cage extends Region{
                             }
                             return [...a, ...mutableBoardData[i].candidates];
                         }, [] );
+                        console.log(allCandidates, allCandidates);
                         let knownCandidates = this.cellIndexes.reduce( (a,i) =>{ 
                             let k =  mutableBoardData[i].given||mutableBoardData[i].answer;
                             
@@ -92,14 +99,16 @@ class Cage extends Region{
                             }
                             return a;
                         }, [candidate] ); // treat candidate as known for this reduce, so I dont need another if( i==cellIdx)
+                        console.log(knownCandidates, knownCandidates);
                         let knownSum = knownCandidates.reduce((a, b) => a + b, 0);
-
+                        console.log(knownSum, knownSum);
 
                         allCandidates = new Set( allCandidates );
                         allCandidates.delete(0);
                         allCandidates.delete(candidate);
                         allCandidates = Array.from(allCandidates).sort();
-
+                        console.log(allCandidates, allCandidates);
+                        
                         let n = this.cellIndexes.length-knownCandidates.length;
                         let minN = allCandidates.slice(0,n);
                         let maxN = allCandidates.slice(allCandidates.length-n);
@@ -107,7 +116,7 @@ class Cage extends Region{
                         let maxSum =  knownSum + maxN.reduce((a, b) => a + b, 0)
 
                         if( minSum > this.value || this.value > maxSum ){
-                            console.log("Removing value from square", cIndex, cellIdx);
+                            console.log(`Removing value ${candidate} from square ${cellIdx}`, minSum, this.value, maxSum, );
                             replacementCandidates[cIndex] = 0;
                             mutations = mutations+1;
                         }

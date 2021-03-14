@@ -23,7 +23,9 @@ class Region {
       return 0;
         
     }
-    
+    component(){
+        return <></>;
+    }
 
 }
 export default Region;
