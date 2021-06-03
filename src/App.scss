@@ -157,12 +157,15 @@
 .thermometer {
   display: contents;
 }
+.line {
+  display: contents;
+}
 .cell-holder {
   display: contents;
 }
 .bulb {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 10'> <circle cx='5' cy='5' r='2' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 10'> <circle cx='5' cy='5' r='2' fill='grey' /> </svg>");
   //M5 4 V 6 H 15 V 4
   background-repeat:no-repeat;
   background-position:center center;
@@ -175,41 +178,81 @@
 }
 .tube-right {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'>"+" <circle cx='5' cy='5' r='1' fill='red' /> <line x1='5' x2='15' y1='5' y2='5' stroke-width='2' stroke='red'/> <circle cx='15' cy='5' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'>"+" <circle cx='5' cy='5' r='1' fill='grey' /> <line x1='5' x2='15' y1='5' y2='5' stroke-width='2' stroke='grey'/> <circle cx='15' cy='5' r='1' fill='grey' /> </svg>");
   //M5 4 V 6 H 15 V 4
 }
 .tube-left {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'> <circle cx='15' cy='5' r='1' fill='red' /> <line x1='15' x2='5' y1='5' y2='5' stroke-width='2' stroke='red'/> <circle cx='5' cy='5' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'> <circle cx='15' cy='5' r='1' fill='grey' /> <line x1='15' x2='5' y1='5' y2='5' stroke-width='2' stroke='grey'/> <circle cx='5' cy='5' r='1' fill='grey' /> </svg>");
   //M5 4 V 6 H 15 V 4
 }
 
 .tube-down {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='5' r='1' fill='red' /> <line x1='5' x2='5' y1='5' y2='15' stroke-width='2' stroke='red'/> <circle cx='5' cy='15' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='5' r='1' fill='grey' /> <line x1='5' x2='5' y1='5' y2='15' stroke-width='2' stroke='grey'/> <circle cx='5' cy='15' r='1' fill='grey' /> </svg>");
 }
 .tube-up {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='15' r='1' fill='red' /> <line x1='5' x2='5' y1='15' y2='5' stroke-width='2' stroke='red'/> <circle cx='5' cy='5' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='15' r='1' fill='grey' /> <line x1='5' x2='5' y1='15' y2='5' stroke-width='2' stroke='grey'/> <circle cx='5' cy='5' r='1' fill='grey' /> </svg>");
 }
 
 .tube-right.tube-down {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='5' r='1' fill='red' /> <line x1='5' x2='15' y1='5' y2='15' stroke-width='2' stroke='red'/><circle cx='15' cy='15' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='5' r='1' fill='grey' /> <line x1='5' x2='15' y1='5' y2='15' stroke-width='2' stroke='grey'/><circle cx='15' cy='15' r='1' fill='grey' /> </svg>");
 }
 .tube-right.tube-up {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='15' r='1' fill='red' /> <line x1='5' x2='15' y1='15' y2='5' stroke-width='2' stroke='red'/><circle cx='15' cy='5' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='15' r='1' fill='grey' /> <line x1='5' x2='15' y1='15' y2='5' stroke-width='2' stroke='grey'/><circle cx='15' cy='5' r='1' fill='grey' /> </svg>");
 }
 
 .tube-left.tube-down {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='5' r='1' fill='red' /> <line x1='15' x2='5' y1='5' y2='15' stroke-width='2' stroke='red'/><circle cx='5' cy='15' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='5' r='1' fill='grey' /> <line x1='15' x2='5' y1='5' y2='15' stroke-width='2' stroke='grey'/><circle cx='5' cy='15' r='1' fill='grey' /> </svg>");
 }
 .tube-left.tube-up {
   position: relative;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='15' r='1' fill='red' /> <line x1='15' x2='5' y1='15' y2='5' stroke-width='2' stroke='red'/><circle cx='5' cy='5' r='1' fill='red' /> </svg>");
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='15' r='1' fill='grey' /> <line x1='15' x2='5' y1='15' y2='5' stroke-width='2' stroke='grey'/><circle cx='5' cy='5' r='1' fill='grey' /> </svg>");
 }
+
+
+.line-right {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'>"+" <circle cx='5' cy='5' r='0.5' fill='red' /> <line x1='5' x2='15' y1='5' y2='5' stroke-width='1' stroke='red'/> <circle cx='15' cy='5' r='0.5' fill='red' /> </svg>");
+  //M5 4 V 6 H 15 V 4
+}
+.line-left {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'> <circle cx='15' cy='5' r='0.5' fill='red' /> <line x1='15' x2='5' y1='5' y2='5' stroke-width='1' stroke='red'/> <circle cx='5' cy='5' r='0.5' fill='red' /> </svg>");
+  //M5 4 V 6 H 15 V 4
+}
+
+.line-down {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='5' r='0.5' fill='red' /> <line x1='5' x2='5' y1='5' y2='15' stroke-width='1' stroke='red'/> <circle cx='5' cy='15' r='0.5' fill='red' /> </svg>");
+}
+.line-up {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='15' r='0.5' fill='red' /> <line x1='5' x2='5' y1='15' y2='5' stroke-width='1' stroke='red'/> <circle cx='5' cy='5' r='0.5' fill='red' /> </svg>");
+}
+
+.line-right.line-down {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='5' r='0.5' fill='red' /> <line x1='5' x2='15' y1='5' y2='15' stroke-width='1' stroke='red'/><circle cx='15' cy='15' r='0.5' fill='red' /> </svg>");
+}
+.line-right.line-up {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='15' r='0.5' fill='red' /> <line x1='5' x2='15' y1='15' y2='5' stroke-width='1' stroke='red'/><circle cx='15' cy='5' r='0.5' fill='red' /> </svg>");
+}
+
+.line-left.line-down {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='5' r='0.5' fill='red' /> <line x1='15' x2='5' y1='5' y2='15' stroke-width='1' stroke='red'/><circle cx='5' cy='15' r='0.5' fill='red' /> </svg>");
+}
+.line-left.line-up {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='15' cy='15' r='0.5' fill='red' /> <line x1='15' x2='5' y1='15' y2='5' stroke-width='1' stroke='red'/><circle cx='5' cy='5' r='0.5' fill='red' /> </svg>");
+}
+
 
 .cage {
   display: contents;
@@ -230,4 +273,23 @@
 .cage-right {
   margin-right: 2px;
   border-right:2px dashed #f00;
+}
+
+
+.quad {
+  display: contents;
+
+  
+}
+
+.quadcell{
+position: relative;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'> <circle cx='50' cy='50' r='10' stroke-width='1' stroke='black' fill='white' />  </svg>");
+display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  grid-column-end: span 2;
+  grid-row-end: span 2;
+  font-size: 0.75em;
 }
