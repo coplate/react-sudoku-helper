@@ -1,6 +1,6 @@
-function Tube(props){
+function Renban(props){
     const cells = props.cells;
-    const linetype = props.type || 'tube';
+
     let path = [];
     cells.forEach((cell, i, a) => {
         
@@ -17,28 +17,34 @@ function Tube(props){
             let y = Math.min(startRow,endRow);
             let type="tube";
             if( dx === 1 ){
-                type=type+` ${linetype}-right`;
+                type=type+" tube-right";
                 
             }
             if( dy ===1 ){
-                type=type+` ${linetype}-down`;
+                type=type+" tube-down";
             }
             if( dx === -1 ){
-                type=type+` ${linetype}-left`;
+                type=type+" tube-left";
                 
             }
             if( dy === -1 ){
-                type=type+` ${linetype}-up`;
+                type=type+" tube-up";
             }
             //0,45,90,135,180, 225, 270, 315, 360
             path.push({"idx":cell, startColumn:x, startRow:y, dx:Math.abs(dx), dy:Math.abs(dy), type:type });
         }
     });
-    return <div className="line">
+    return <div className="renban">
         {
-            path.map( p => <div key={p.idx} className={`${p.type}`} style={{gridColumn: `${p.startColumn+1} / span ${p.dx+1}`, gridRow: `${p.startRow+1} / span ${p.dy+1}`}} />)}
+        
+        path.map( p => <div key={p.idx} className={`${p.type}`} style={{gridColumn: `${p.startColumn+1} / span ${p.dx+1}`, gridRow: `${p.startRow+1} / span ${p.dy+1}`}} > 
+              
+
+      </div> 
+        )}
     </div>
     
 }
 
-export default Tube;
+
+export default Renban;

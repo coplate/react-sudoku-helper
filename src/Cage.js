@@ -1,6 +1,5 @@
 function Cage(props){
     const cells = props.cells;
-    const bulb = cells[0];
     let border = [];
     cells.forEach((cell, i, a) => {
         

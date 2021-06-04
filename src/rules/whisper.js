@@ -24,7 +24,7 @@ class Whisper extends Region{
              let immutableSquare = mutableBoardData[cellIdx];
              let replacementCandidates = [...immutableSquare.candidates];
              
-             let known = immutableSquare.given || immutableSquare.answer;
+//             let known = immutableSquare.given || immutableSquare.answer;
          
              
                          

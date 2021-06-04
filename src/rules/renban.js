@@ -1,7 +1,7 @@
 import Region from "./region";
-import ThemoComponent from "../Thermometer";
+import RenbanComponent from "../Renban";
 
-class Thermometer extends Region{
+class Renban extends Region{
 
 
     constructor(cells, exact=true, value=12) {
@@ -13,7 +13,7 @@ class Thermometer extends Region{
     }
 
     component(){
-        return <ThemoComponent cells={[...this.cellIndexes]} />;
+        return <RenbanComponent cells={[...this.cellIndexes]} />;
     }
   
     // cloneSquare function allows us to create new square object to prevent mutating the old version
@@ -38,19 +38,33 @@ class Thermometer extends Region{
             //if a candidate is too big, or too small to work, remove it
             replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 if( candidate > 0 ){
-                    // a thermometer, square N must be bigger than square n-1, and smaller than square N+1
-//                    let forbidden = false;
-                    let minN = 0;
-                    let maxN = 10;
-                    if( index > 0 ){
-                        minN = Math.min( ...mutableBoardData[array[index-1]].candidates.filter( n => n>0)) ;
-                        // must be bigger than cellIdx-1
-                    }
-                    if( index < array.length-1 ){
-                        maxN = Math.max( ...mutableBoardData[array[index+1]].candidates.filter( n => n>0));
-                        // must be smaller than cellIdx+1
-                    }
-                    if( candidate >=maxN || candidate <= minN ){
+                     // a renban line is "consecutive non-repeating digits, in any order".
+                    // so, 1,2,3,4,5 could be 1,4,5,2,3, etc.
+
+                    // Two examples:
+                    // in a 3 digit renban, when none of the digits can be 2 or 7.
+                    // Can I be a 1, no, can I be an 8 or 9, no.
+                    // in a 
+                    
+                    //
+                    /*np
+                        if N > i
+                        For a 1 to work, you must be able to do 1,2..N from the avaiable squares
+                        For a 2 to work, you nust me able to do 2..N-1 from the available squares
+                        if i > N
+                        For a 8 to work, you must be able to do (9-N)..8 from the available squares
+                        For a 9 to work, you must be able to do (10-N)..9 from the available squares
+                    */
+
+                  
+                    
+                    // for 8 to be valid, on a 3 digit renban, I must be able to make:
+                    // 6,7,8 - 7,8,9 - or 8,9,10
+                    // 8,9,10 is nto valid for obvious reasons.
+                    // And the 6 and 7 must be from differnt squares.
+
+
+                    if( false ){
                         console.log("Removing value from square", cIndex, cellIdx);
                         replacementCandidates[cIndex] = 0;
                         mutations = mutations+1;
@@ -88,4 +102,4 @@ class Thermometer extends Region{
 
 
 }
-export default Thermometer;
+export default Renban;

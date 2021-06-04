@@ -1,4 +1,3 @@
-import Thermometer from './Thermometer'
 
 function Given(props){
     

@@ -23,7 +23,7 @@ class Quadruple extends Region{
         let otherMutations = 0;
         replacementCandidates.forEach( (c,i,a) =>{
             if( ! allowed.includes(c) ){
-                if( a[i] != 0){
+                if( a[i] !== 0){
                     a[i]=0;
                     otherMutations = otherMutations+1;
                 }

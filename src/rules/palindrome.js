@@ -4,9 +4,9 @@ import Tube from "../Line";
 class Palindrome extends Region{
 
 
-    constructor(cells) {
-        super(cells);
-    }
+    // constructor(cells) {
+    //     super(cells);
+    // }
 
     component(){
         return <Tube cells={[...this.cellIndexes]} />;
@@ -21,7 +21,7 @@ class Palindrome extends Region{
              let immutableSquare = mutableBoardData[cellIdx];
              let replacementCandidates = [...immutableSquare.candidates];
              
-             let known = immutableSquare.given || immutableSquare.answer;
+//             let known = immutableSquare.given || immutableSquare.answer;
          
              let opposingIndex = array.length - (index +1)
              let opposingSquare = mutableBoardData[array[opposingIndex]];

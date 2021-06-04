@@ -8,6 +8,7 @@ import Knight from './rules/knight';
 import King from './rules/king';
 import Pawn from './rules/pawn';
 import Thermometer from './rules/thermometer';
+import Renban from './rules/renban';
 
 import LittleKiller from './rules/littleKiller';
 import Canvas from './Canvas';
@@ -29,6 +30,7 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
     <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9"))}>Create Cage</button>
     <button onClick={(e) => props.clickDispatcher(e, 'thermometer')}>Thermometer</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'renban')}>Renban</button>
     <br ></br>
     <button onClick={(e) => props.clickDispatcher(e, 'whisper')}>Whisper</button>
     <button onClick={(e) => props.clickDispatcher(e, 'palindrome')}>Palindrome</button>
@@ -126,6 +128,9 @@ function App() {
         break;
       case "thermometer":
         newRule = new Thermometer(selectedCells);
+        break;
+      case "renban":
+        newRule = new Renban(selectedCells);
         break;
       case "whisper":
         newRule = new Whisper(selectedCells);
@@ -237,85 +242,88 @@ function App() {
             return;
           }
           return;
-          if (!(ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource())) {
-            return;
-            // any candidate that only exists in a region, and the places it exists overlap with another region, it must be withing the intersection
-          }
+
+          // {
+          //   if (!(ruleA.supportsIntersectionSource() && ruleB.supportsIntersectionSource())) {
+          //     return;
+          //     // any candidate that only exists in a region, and the places it exists overlap with another region, it must be withing the intersection
+          //   }
 
 
-          // I can build a rule inside knight etc, that can conclude - if a candidate being true, makes another region impossible, then it cannot be true - this is a reversal of the way we phrase about an intersction
-          // becasue if the candidate is in RuleB, in a location that is not in the intersection, then ruleA becomes impossible.
+          //   // I can build a rule inside knight etc, that can conclude - if a candidate being true, makes another region impossible, then it cannot be true - this is a reversal of the way we phrase about an intersction
+          //   // becasue if the candidate is in RuleB, in a location that is not in the intersection, then ruleA becomes impossible.
 
-          [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
-            // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
-            let candidate = index + 1;
+          //   [...Array(9).fill(0).keys()].forEach((cm, index, arr) => {
+          //     // if all of the values of candidate are in (A int B), remove candidate from all other cells in B;
+          //     let candidate = index + 1;
 
-            /*
-            if( candidate => ruleB.impossible)
-
-
-            */
-
-            let locationA = ruleA.cellIndexes.filter((i) => newBoardData[i].candidates.includes(candidate));
-            let locationB = ruleB.cellIndexes.filter((i) => newBoardData[i].candidates.includes(candidate));
+          //     /*
+          //     if( candidate => ruleB.impossible)
 
 
+          //     */
 
-
-            let intersection = locationA.filter((i) => locationB.includes(i));
-            if (intersection.length === 0) {
-              return;
-            }
-
-            //something like knights move does not have a standard intersection, however intersections in the other rule are based on the current candidate square
-
-            // Cages for example,  work ruleA-->B in the context -- If a candidate in the Cage would make the other rule impossible, the candidate must be removed
-            //      Alternatively, ruleB->A -- If all candidates in ruleB intersect with the cage, then the candidate in ruleB must be valid, and in ruleA are forbidden ( same result )
-            // If all candidates in a Normal Rule A exist within the intersection of another Unique Rule B, then all other locations in B must be forbidden
-            // If a particular candidate in Unique Rule A exists outside of the intersection with Standard Rule B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
-
-            // For knights moves
-            // if a particular candidate in knighs Rule A exists outside the of the intersection with Standard RUle B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
-            // AKA - if a particular cnadidate "Sees", all candidates in Standard Rule B, then it mus tbe forbidden.
-            // for knights though, this must work a little differnt - it has to look at the knights move, and the x/y intersections
+          //     let locationA = ruleA.cellIndexes.filter((i) => newBoardData[i].candidates.includes(candidate));
+          //     let locationB = ruleB.cellIndexes.filter((i) => newBoardData[i].candidates.includes(candidate));
 
 
 
-            // so for candidate N in in a square Y of any number of rules; if N "intersect" with all instances of N in Rule Z, then candidate N must be removed from square Y
 
-            // 
-            /* 
-            for ruleZ in rules:
-              for squareY in ruleZ:
-                for candidateN in square:
-                  generate intersection of all rules(Square Y / Candidate N)
-                  if all N in ruleZ are within intersection - N must be removed from  from Y
+          //     let intersection = locationA.filter((i) => locationB.includes(i));
+          //     if (intersection.length === 0) {
+          //       return;
+          //     }
 
-            */
+          //     //something like knights move does not have a standard intersection, however intersections in the other rule are based on the current candidate square
+
+          //     // Cages for example,  work ruleA-->B in the context -- If a candidate in the Cage would make the other rule impossible, the candidate must be removed
+          //     //      Alternatively, ruleB->A -- If all candidates in ruleB intersect with the cage, then the candidate in ruleB must be valid, and in ruleA are forbidden ( same result )
+          //     // If all candidates in a Normal Rule A exist within the intersection of another Unique Rule B, then all other locations in B must be forbidden
+          //     // If a particular candidate in Unique Rule A exists outside of the intersection with Standard Rule B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
+
+          //     // For knights moves
+          //     // if a particular candidate in knighs Rule A exists outside the of the intersection with Standard RUle B, and that candidate only exist withing the intersection in rule B, then this candidate must be removed
+          //     // AKA - if a particular cnadidate "Sees", all candidates in Standard Rule B, then it mus tbe forbidden.
+          //     // for knights though, this must work a little differnt - it has to look at the knights move, and the x/y intersections
 
 
-            if (locationA.every((i) => intersection.includes(i))) {
-              // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
-              // all cells in ruleB, if B is a 'unique' rule;
-              // but not all 
-              if (locationB.length > intersection.length) {
-                //removing it
-                ruleB.cellIndexes.forEach((c) => {
-                  if (!intersection.includes(c)) {
-                    //mutations = mutations+1;
 
-                    let newSquareData = cloneSquare(newBoardData[c]);
-                    console.log("Removing value from square becasue of intersection logic", indexA, indexB, locationA, locationB, intersection);
-                    newSquareData.candidates = newSquareData.candidates.map((i) => i === candidate ? 0 : i);
-                    mutations = mutations + 1;
-                    newBoardData[c] = newSquareData;
+          //     // so for candidate N in in a square Y of any number of rules; if N "intersect" with all instances of N in Rule Z, then candidate N must be removed from square Y
 
-                  }
-                });
-              }
-            }
+          //     // 
+          //     /* 
+          //     for ruleZ in rules:
+          //       for squareY in ruleZ:
+          //         for candidateN in square:
+          //           generate intersection of all rules(Square Y / Candidate N)
+          //           if all N in ruleZ are within intersection - N must be removed from  from Y
 
-          });
+          //     */
+
+
+          //     if (locationA.every((i) => intersection.includes(i))) {
+          //       // every value of candidate from ruleA is within the intersection.  for normal rules this means that the value must be removed form 
+          //       // all cells in ruleB, if B is a 'unique' rule;
+          //       // but not all 
+          //       if (locationB.length > intersection.length) {
+          //         //removing it
+          //         ruleB.cellIndexes.forEach((c) => {
+          //           if (!intersection.includes(c)) {
+          //             //mutations = mutations+1;
+
+          //             let newSquareData = cloneSquare(newBoardData[c]);
+          //             console.log("Removing value from square becasue of intersection logic", indexA, indexB, locationA, locationB, intersection);
+          //             newSquareData.candidates = newSquareData.candidates.map((i) => i === candidate ? 0 : i);
+          //             mutations = mutations + 1;
+          //             newBoardData[c] = newSquareData;
+
+          //           }
+          //         });
+          //       }
+          //     }
+
+          //   });
+          // }
           //applyIntersection(ruleA, ruleB);
 
           // If a candidate being true, make a region impossible, then the candidate must be forbidden
