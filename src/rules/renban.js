@@ -6,12 +6,32 @@ class Renban extends Region{
 
     constructor(cells, exact=true, value=12) {
         super(cells);
-        console.log(this.cellIndexes);
+        //console.log(this.cellIndexes);
 
         this.exact = exact;
         this.value = parseInt(value);
     }
 
+
+    renbanValidates(mutableBoardData, digits, cellIndexes){
+
+        if( digits.length === 0 ){
+            return true;
+        }
+
+        let digit = digits[0];
+        let otherDigits = digits.slice(1);
+
+        //console.log("Checking for digits in cells", digits, cellIndexes);
+        let startingCellIndexes = cellIndexes.filter( i => mutableBoardData[i].candidates.includes(digit));
+
+        if( startingCellIndexes.length === 0){
+            //console.log(`No cells fulfil the requirement that digit ${digit} exists`);
+            return false;
+        }
+
+        return startingCellIndexes.some( (index) => this.renbanValidates(mutableBoardData, otherDigits, cellIndexes.filter( i => i!==index )) );;
+    }
     component(){
         return <RenbanComponent cells={[...this.cellIndexes]} />;
     }
@@ -38,34 +58,24 @@ class Renban extends Region{
             //if a candidate is too big, or too small to work, remove it
             replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 if( candidate > 0 ){
-                     // a renban line is "consecutive non-repeating digits, in any order".
-                    // so, 1,2,3,4,5 could be 1,4,5,2,3, etc.
-
-                    // Two examples:
-                    // in a 3 digit renban, when none of the digits can be 2 or 7.
-                    // Can I be a 1, no, can I be an 8 or 9, no.
-                    // in a 
                     
-                    //
-                    /*np
-                        if N > i
-                        For a 1 to work, you must be able to do 1,2..N from the avaiable squares
-                        For a 2 to work, you nust me able to do 2..N-1 from the available squares
-                        if i > N
-                        For a 8 to work, you must be able to do (9-N)..8 from the available squares
-                        For a 9 to work, you must be able to do (10-N)..9 from the available squares
-                    */
+                    let allowed=false;
+                    let renLength = this.cellIndexes.length;
+                    for( var start = candidate; start > 0 && start > candidate-renLength; start-- ){
+                        let digits=[];
+                        for( var i = 0; i < renLength; i++){
+                            digits.push(start+i);
+                        }
+                        //console.log("Checking: ", digits, this.cellIndexes);
 
-                  
-                    
-                    // for 8 to be valid, on a 3 digit renban, I must be able to make:
-                    // 6,7,8 - 7,8,9 - or 8,9,10
-                    // 8,9,10 is nto valid for obvious reasons.
-                    // And the 6 and 7 must be from differnt squares.
+                        allowed = this.renbanValidates(mutableBoardData, digits.filter( c => c!== candidate), this.cellIndexes.filter( i => i!== cellIdx))
+                        if( allowed){ break;}
+                    }
 
+                   
 
-                    if( false ){
-                        console.log("Removing value from square", cIndex, cellIdx);
+                    if( !allowed ){
+                        //console.log("Removing value from square", cIndex, cellIdx);
                         replacementCandidates[cIndex] = 0;
                         mutations = mutations+1;
                     }
