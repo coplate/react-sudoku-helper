@@ -4,11 +4,14 @@ import Board from './Board'
 import Standard from "./rules/standard";
 
 import Cage from './rules/cage';
+import Same from './rules/same';
+import Kropke from './rules/kropke';
 import Knight from './rules/knight';
 import King from './rules/king';
 import Pawn from './rules/pawn';
 import Thermometer from './rules/thermometer';
 import Renban from './rules/renban';
+import Mod from './rules/mod';
 
 import LittleKiller from './rules/littleKiller';
 import Canvas from './Canvas';
@@ -28,19 +31,26 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'undo')}>Undo</button>
     <button onClick={(e) => props.clickDispatcher(e, 'redo')}>Redo</button>
     <button onClick={(e) => props.clickDispatcher(e, 'accept')}>Accept</button>
+    
     <button onClick={(e) => props.clickDispatcher(e, 'cage', prompt("Value", "9"))}>Create Cage</button>
     <button onClick={(e) => props.clickDispatcher(e, 'thermometer')}>Thermometer</button>
     <button onClick={(e) => props.clickDispatcher(e, 'renban')}>Renban</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'kropke', prompt("Type", "1"))}>Kropke</button>
     <br ></br>
     <button onClick={(e) => props.clickDispatcher(e, 'whisper')}>Whisper</button>
     <button onClick={(e) => props.clickDispatcher(e, 'palindrome')}>Palindrome</button>
     <button onClick={(e) => props.clickDispatcher(e, 'quadruple', prompt("Enter Values", ""))}>Quadruple</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'mod', 2, 1)}>Odd</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'mod', 2, 0)}>Even</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'mod', prompt("ModVal", "3"), prompt("ModResult", "0"))}>Mod</button>
     <br />
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'knight', prompt("Match Distance", "0"))}>Apply Knights Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'pawn', prompt("Match Distance", "0"))}>Apply pawn Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'chess', 'king', prompt("Match Distance", "0"))}>Apply king Move</button>
     <button onClick={(e) => props.clickDispatcher(e, 'littleKiller', prompt("Value", "45"))}>Create Little Killer Cage</button>
     <button onClick={(e) => props.clickDispatcher(e, 'color', prompt("Value", "1"))}>Color digit</button>
+    <br />
+    <button onClick={(e) => props.clickDispatcher(e, 'same')}>Same</button>
   </div>
 
 }
@@ -131,7 +141,18 @@ function App() {
         break;
       case "renban":
         newRule = new Renban(selectedCells);
+      break;
+      case "kropke":
+        let [type/*, ...p*/] = [...props];
+        newRule = new Kropke(selectedCells, type);
+      break;
+      case "same":
+        newRule = new Same(selectedCells);
         break;
+      case "mod":
+        let [modVal, modResult/*, ...p*/] = [...props];
+        newRule = new Mod(selectedCells, modVal, modResult);
+      break;
       case "whisper":
         newRule = new Whisper(selectedCells);
         break;
@@ -350,6 +371,13 @@ function App() {
       if (!isNaN(number)) {
         updateSelections(number);
         // type into highlighted squares
+      }else{
+        if( event.key === 's'){
+          clickDispatcher(event, 'same');
+        }
+        if( event.key === 'c'){
+          clickDispatcher(event, 'cage', prompt("Value", "9"));
+        }
       }
     }
 

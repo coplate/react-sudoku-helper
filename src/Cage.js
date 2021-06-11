@@ -1,6 +1,10 @@
 function Cage(props){
     const cells = props.cells;
     let border = [];
+    let cageVal = "?";
+    if( props.val){
+        cageVal = props.val;
+    }
     cells.forEach((cell, i, a) => {
         
 
@@ -28,6 +32,7 @@ function Cage(props){
         
     });
     return <div className="cage">
+        <div className={`cage-val ${gridClasses(cells[0])}`}  >{cageVal}</div> 
         {
         border.map( p => <div key={p.idx} className={`cage-cell ${p.type} ${gridClasses(p.idx)}`}  > 
       </div> 

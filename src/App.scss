@@ -65,11 +65,6 @@
   justify-items: start;
   top: 25%;
 }
-.cageValue {
-  top: 0%;
-  left: 20%;
-  text-align: left;
-}
 .snyder {
   position: relative;
   top: 0%;
@@ -160,6 +155,33 @@
 .renban {
   display: contents;
 }
+.kropke {
+  display: contents;
+}
+.mod {
+  display: contents;
+}
+.mod-2-0 /*even*/ {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 10'> <rect  x='2' y='2' width='6' height='6' fill='grey' /> </svg>");
+  //M5 4 V 6 H 15 V 4
+  background-repeat:no-repeat;
+  background-position:center center;
+  //scale it 
+  background-size: 100% 100%, auto;
+  
+}
+.mod-2-1 /*odd*/ {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 10'> <circle cx='5' cy='5' r='3' fill='grey' /> </svg>");
+  //M5 4 V 6 H 15 V 4
+  background-repeat:no-repeat;
+  background-position:center center;
+  //scale it 
+  background-size: 100% 100%, auto;
+  
+}
+
 .line {
   display: contents;
 }
@@ -199,6 +221,29 @@
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='15' r='1' fill='grey' /> <line x1='5' x2='5' y1='15' y2='5' stroke-width='2' stroke='grey'/> <circle cx='5' cy='5' r='1' fill='grey' /> </svg>");
 }
 
+.dot {
+  position: relative;
+}
+.dot-1-right, .dot-1-left {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'>"+" <circle cx='10' cy='5' r='1' stroke='grey' stroke-width='0.25' fill='transparent' /></svg>");
+  //M5 4 V 6 H 15 V 4
+}
+
+.dot-1-down, .dot-1-up {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='10' r='1' stroke='grey' stroke-width='0.25' fill='transparent' /> </svg>");
+}
+.dot-2-right, .dot-2-left {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 10'>"+" <circle cx='10' cy='5' r='1' stroke='grey' stroke-width='0.25' fill='grey' /></svg>");
+  //M5 4 V 6 H 15 V 4
+}
+
+.dot-2-down, .dot-2-up {
+  position: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 20'> <circle cx='5' cy='10' r='1' stroke='grey' stroke-width='0.25' fill='grey' /> </svg>");
+}
 .tube-right.tube-down {
   position: relative;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 20 20'> <circle cx='5' cy='5' r='1' fill='grey' /> <line x1='5' x2='15' y1='5' y2='15' stroke-width='2' stroke='grey'/><circle cx='15' cy='15' r='1' fill='grey' /> </svg>");
@@ -260,6 +305,12 @@
 .cage {
   display: contents;
 }
+.cage-val {
+    display: relative;
+    margin-top: 3%;
+    margin-left: 5%;
+    text-align: left;
+}
 
 .cage-down {
   margin-bottom: 2px;
@@ -274,7 +325,7 @@
   border-left:2px dashed #f00;
 }
 .cage-right {
-  margin-right: 2px;
+  margin-right: 4px;
   border-right:2px dashed #f00;
 }
 
@@ -284,7 +335,20 @@
 
   
 }
-
+.same /*even*/ {
+  display: contents;
+  
+}
+.same-cell /*even*/ {
+  display: relative;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 10 10'> <rect  x='0' y='0' width='10' height='10' fill='grey' /> </svg>");
+  //M5 4 V 6 H 15 V 4
+  background-repeat:no-repeat;
+  background-position:center center;
+  //scale it 
+  background-size: 100% 100%, auto;
+  
+}
 .quadcell{
 position: relative;
 background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'> <circle cx='50' cy='50' r='10' stroke-width='1' stroke='black' fill='white' />  </svg>");

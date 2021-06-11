@@ -6,11 +6,40 @@ class Cage extends Region{
     constructor(cells, exact=true, value) {
         super(cells);
 
-        this.exact = exact;
+        
         this.value = parseInt(value);
+        this.exact = this.value > 0;
     }
+
+    cageValidates(mutableBoardData, digits, sum, cellIndexes){
+
+        if( sum < 1){
+            return false;
+        }
+        if( cellIndexes.length === 1 ){
+            if( digits.includes(sum) ){
+                return false;
+            }
+            return mutableBoardData[cellIndexes[0]].candidates.includes(sum);
+        }
+
+        return cellIndexes.some( index => {
+            let otherCellIndexes = cellIndexes.filter( i=> i!== index);
+            let candidates = mutableBoardData[index].candidates.filter( c => (c>0 && c < sum && !digits.includes(c)) );
+            
+            return candidates.some( candidate => {
+                if( this.cageValidates(mutableBoardData, [...digits, candidate], sum-candidate, otherCellIndexes) ){
+                    return true;
+                }
+                return false;
+            })
+
+        });
+        
+    }
+
     component(){
-        return <CageComponent cells={[...this.cellIndexes]} />;
+        return <CageComponent cells={[...this.cellIndexes]} val={this.value}/>;
     }
 
     setFlags(newBoardData){
@@ -41,16 +70,8 @@ class Cage extends Region{
             
             let known = immutableSquare.given || immutableSquare.answer;
         
-            // clear all other values if we know the answer
-            if(  known ){
-                //mutations += removeOther(replacementCandidates, known);
-                // handled by Normal
-                // remove all candidate except given
-            }
-            
-
+         
             // if the region contains only 1 of a given candidate, remove all other candidates form that cell -- only for 9 square unique Regions - not cages per se
-
             // if the region has a known candidate in another cell, remove that from this cell - only for unique Regions
             if( this.exact ){
                 replacementCandidates.forEach( (candidate, cIndex, cArray) => {
@@ -58,7 +79,6 @@ class Cage extends Region{
                     if( candidate > 0 ){
                         let solvedIndex = this.cellIndexes.filter( (i) => i!==cellIdx).some( cIdx => (mutableBoardData[cIdx].given||mutableBoardData[cIdx].answer) === candidate  );
                         if( solvedIndex){
-                            console.log("Removing value from square", cIndex, cellIdx);
                             replacementCandidates[cIndex] = 0;
                             mutations = mutations+1;
                         }
@@ -69,54 +89,14 @@ class Cage extends Region{
             }     
 
                         
-                // This has a defect when it crosses boundries, since you CAN have repeats then.
-
+               
                 // need to honor the unique flag
               //also for exeact matches is: if a candidate is too big, or too small to work, remove it
               if( this.exact ){
+                let otherCellIndexes = this.cellIndexes.filter( i=> i!== cellIdx);
                 replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                     if( candidate > 0 ){
-                        
-                        // if the cage is [  1,5 ; 1,2 ; 1,9; 1/6 ] we need to maksu sure that the 2nd value is considered
-                        // alternatively, join all candidates
-                        
-
-                        let allCandidates = this.cellIndexes.reduce( (a,i) =>{ 
-                            if( cellIdx === i){
-                                return [...a];
-                            }
-                            if( mutableBoardData[i].given||mutableBoardData[i].answer){
-                                return [...a];
-                            }
-                            return [...a, ...mutableBoardData[i].candidates];
-                        }, [] );
-                        console.log(allCandidates, allCandidates);
-                        let knownCandidates = this.cellIndexes.reduce( (a,i) =>{ 
-                            let k =  mutableBoardData[i].given||mutableBoardData[i].answer;
-                            
-                            if( k ){
-                                return [...a,k];
-                            }
-                            return a;
-                        }, [candidate] ); // treat candidate as known for this reduce, so I dont need another if( i==cellIdx)
-                        console.log(knownCandidates, knownCandidates);
-                        let knownSum = knownCandidates.reduce((a, b) => a + b, 0);
-                        console.log(knownSum, knownSum);
-
-                        allCandidates = new Set( allCandidates );
-                        allCandidates.delete(0);
-                        allCandidates.delete(candidate);
-                        allCandidates = Array.from(allCandidates).sort();
-                        console.log(allCandidates, allCandidates);
-                        
-                        let n = this.cellIndexes.length-knownCandidates.length;
-                        let minN = allCandidates.slice(0,n);
-                        let maxN = allCandidates.slice(allCandidates.length-n);
-                        let minSum =  knownSum + minN.reduce((a, b) => a + b, 0);
-                        let maxSum =  knownSum + maxN.reduce((a, b) => a + b, 0)
-
-                        if( minSum > this.value || this.value > maxSum ){
-                            console.log(`Removing value ${candidate} from square ${cellIdx}`, minSum, this.value, maxSum, );
+                        if( ! this.cageValidates(mutableBoardData, [candidate], this.value-candidate, otherCellIndexes)){
                             replacementCandidates[cIndex] = 0;
                             mutations = mutations+1;
                         }
