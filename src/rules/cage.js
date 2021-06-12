@@ -13,6 +13,9 @@ class Cage extends Region{
 
     cageValidates(mutableBoardData, digits, sum, cellIndexes){
 
+        if( cellIndexes.length === 0 && sum === 0 ){
+            return true;
+        }
         if( sum < 1){
             return false;
         }
