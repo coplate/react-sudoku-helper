@@ -1,7 +1,5 @@
 function Same(props){
     const cells = props.cells;
-    const bulb = cells[0];
-    let path = [];
     return <div className="same">
         {
             cells.map( cell => <div className={`same-cell ${gridClasses(cell)}`} /> )

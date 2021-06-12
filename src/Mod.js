@@ -1,6 +1,5 @@
 function Mod(props){
     const cells = props.cells;
-    const bulb = cells[0];
     let path = [];
     cells.forEach((cell, i, a) => {
     

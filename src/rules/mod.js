@@ -32,7 +32,6 @@ class Mod extends Region{
            
 
                         
-            let otherCellIndexes = this.cellIndexes.filter( i=> i!== cellIdx);
             replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 if( candidate > 0 ){
                     if( candidate%this.value !== this.result ){

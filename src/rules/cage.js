@@ -68,7 +68,6 @@ class Cage extends Region{
             let immutableSquare = mutableBoardData[cellIdx];
             let replacementCandidates = [...immutableSquare.candidates];
             
-            let known = immutableSquare.given || immutableSquare.answer;
         
          
             // if the region contains only 1 of a given candidate, remove all other candidates form that cell -- only for 9 square unique Regions - not cages per se

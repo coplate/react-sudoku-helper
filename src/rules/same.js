@@ -36,7 +36,6 @@ class Same extends Region{
             let immutableSquare = mutableBoardData[cellIdx];
             let replacementCandidates = [...immutableSquare.candidates];
             
-            let known = immutableSquare.given || immutableSquare.answer;
             let otherCellIndexes = this.cellIndexes.filter( i=> i!== cellIdx);
             replacementCandidates.forEach( (candidate, cIndex, cArray) => {
                 //console.log(`Processing same for candidate ${candidate} in cell ${cellIdx}`)

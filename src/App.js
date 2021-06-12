@@ -376,6 +376,7 @@ function App() {
           clickDispatcher(event, 'same');
         }
         if( event.key === 'c'){
+          console.log(event);
           clickDispatcher(event, 'cage', prompt("Value", "9"));
         }
       }
