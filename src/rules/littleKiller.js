@@ -1,9 +1,11 @@
 import Region from "./region";
+import Line from "../Line";
 
 class LittleKiller extends Region{
 
     constructor(cells, exact=true, value) {
         super(cells);
+        console.log("new little")
 
         this.exact = exact;
         this.value = parseInt(value);
@@ -36,6 +38,12 @@ class LittleKiller extends Region{
         });
         
     }
+
+    // probably change to line
+    component(){
+        return <Line cells={[...this.cellIndexes]} val={this.value}/>;
+    }
+
 
     setFlags(newBoardData){
         if( this.exact ){
