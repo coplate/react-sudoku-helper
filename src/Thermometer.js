@@ -1,6 +1,8 @@
 function Thermometer(props){
     const cells = props.cells;
-    const bulb = cells[0];
+    const bulb = props.bulb;
+    const circle = props.circle;
+    
     let path = [];
     cells.forEach((cell, i, a) => {
         
@@ -35,8 +37,15 @@ function Thermometer(props){
         }
     });
     return <div className="thermometer">
-        <div className={`bulb ${gridClasses(bulb)}`} >
-        </div>
+        {
+            props.bulb &&
+            <div className={`bulb ${gridClasses(bulb)}`} />
+        }
+        {
+            props.circle &&
+            <div className={`bulb ${gridClasses(bulb)}`} />
+        }
+        
         {
         
         path.map( p => <div key={p.idx} className={`${p.type}`} style={{gridColumn: `${p.startColumn+1} / span ${p.dx+1}`, gridRow: `${p.startRow+1} / span ${p.dy+1}`}} > 

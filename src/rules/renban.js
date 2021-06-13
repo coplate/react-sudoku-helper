@@ -1,5 +1,5 @@
 import Region from "./region";
-import RenbanComponent from "../Renban";
+import Line from "../Line";
 
 class Renban extends Region{
 
@@ -33,7 +33,7 @@ class Renban extends Region{
         return startingCellIndexes.some( (index) => this.renbanValidates(mutableBoardData, otherDigits, cellIndexes.filter( i => i!==index )) );;
     }
     component(){
-        return <RenbanComponent cells={[...this.cellIndexes]} />;
+        return <Line cells={[...this.cellIndexes]} />;
     }
   
     // cloneSquare function allows us to create new square object to prevent mutating the old version

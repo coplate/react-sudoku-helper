@@ -4,6 +4,7 @@ import Board from './Board'
 import Standard from "./rules/standard";
 
 import Cage from './rules/cage';
+import Arrow from './rules/arrow';
 import Same from './rules/same';
 import Kropke from './rules/kropke';
 import Knight from './rules/knight';
@@ -51,6 +52,8 @@ function Controls(props) {
     <button onClick={(e) => props.clickDispatcher(e, 'color', prompt("Value", "1"))}>Color digit</button>
     <br />
     <button onClick={(e) => props.clickDispatcher(e, 'same')}>Same</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'arrow', false)}>Arrow</button>
+    <button onClick={(e) => props.clickDispatcher(e, 'arrow', true)}>Unique Arrow</button>
   </div>
 
 }
@@ -146,6 +149,10 @@ function App() {
         let [type/*, ...p*/] = [...props];
         newRule = new Kropke(selectedCells, type);
       break;
+      case "arrow":
+        let [unique/*, ...p*/] = [...props];
+        newRule = new Arrow(selectedCells, unique);
+        break;
       case "same":
         newRule = new Same(selectedCells);
         break;

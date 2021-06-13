@@ -2,6 +2,10 @@ function Tube(props){
     const cells = props.cells;
     const linetype = props.type || 'tube';
     const val = props.val;
+    const width = props.width || 5;
+    const bulb = props.bulb;
+    const circle = props.circle;
+    
     let path = [];
     cells.forEach((cell, i, a) => {
         
@@ -35,15 +39,27 @@ function Tube(props){
             path.push({"idx":cell, startColumn:x, startRow:y, dx:Math.abs(dx), dy:Math.abs(dy), type:type });
         }
     });
-    
     return <div className="line">
-        
-        {   val &&
+         {   val &&
             <div className={`cage-val ${gridClasses(cells[0])}`}  >{val}</div> 
             
         }
         {
-            path.map( p => <div key={p.idx} className={`${p.type}`} style={{gridColumn: `${p.startColumn+1} / span ${p.dx+1}`, gridRow: `${p.startRow+1} / span ${p.dy+1}`}} />)}
+            props.bulb &&
+            <div className={`bulb ${gridClasses(props.bulb)}`} />
+        }
+        {
+            props.circle &&
+            <div className={`circle ${gridClasses(props.circle)}`} />
+        }
+        
+        {
+        
+        path.map( p => <div key={p.idx} className={`${p.type}`} style={{gridColumn: `${p.startColumn+1} / span ${p.dx+1}`, gridRow: `${p.startRow+1} / span ${p.dy+1}`}} > 
+              
+
+      </div> 
+        )}
     </div>
     
 }

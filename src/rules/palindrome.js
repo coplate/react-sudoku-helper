@@ -1,5 +1,5 @@
 import Region from "./region";
-import Tube from "../Line";
+import Line from "../Line";
 
 class Palindrome extends Region{
 
@@ -9,7 +9,7 @@ class Palindrome extends Region{
     // }
 
     component(){
-        return <Tube cells={[...this.cellIndexes]} />;
+        return <Line cells={[...this.cellIndexes]} />;
     }
   
     // cloneSquare function allows us to create new square object to prevent mutating the old version
